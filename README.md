@@ -8,9 +8,9 @@ Het programma is één enkel bestand (`index.html`) dat in je browser werkt. Je 
 
 ## Gebruiken
 
-**Online:** open de link van deze pagina op GitHub Pages (zie rechts bij *About* of *Deployments*).
+**Online:** open **https://voltschematix.github.io/voltschematix/**
 
-**Offline:** download `index.html` en dubbelklik erop. Het opent in je browser.
+**Offline:** open de link, druk op **Ctrl+S** en kies **"Webpagina, alleen HTML"**. Dubbelklik later op dat bestand. Alles werkt dan zonder internet, ook PDF maken, Excel en een PDF als achtergrond.
 
 Werkt het best in **Chrome** of **Edge** op een computer. Firefox en Safari werken ook.
 
@@ -24,15 +24,19 @@ Werkt het best in **Chrome** of **Edge** op een computer. Firefox en Safari werk
 
 Een volledige handleiding, met woordenlijst en sneltoetsen, staat in het programma zelf (tabblad **Handleiding**, of de knop **?** rechtsboven).
 
-## Je gegevens
+## Je gegevens en veiligheid
 
 - Alles wat je invult, blijft **op je eigen computer**, in je browser. Er wordt niets doorgestuurd.
-- Bewaar je projecten ook als bestand: *Document → Opslaan als → Ook als bestand op mijn computer bewaren (.json)*. Zo kun je later of op een andere computer verder werken, of het project aan iemand anders bezorgen.
-- Wis je de gegevens van je browser, dan zijn de projecten in die browser weg. Hou daarom altijd een `.json`-bestand bij.
+- Het programma maakt **geen enkele internetverbinding**. Alle onderdelen zitten in het bestand zelf.
+- Een strikte beveiligingsregel laat alleen de eigen code van het programma draaien. Projectbestanden worden bij het openen gecontroleerd en opgeschoond.
+- Haal het programma **alleen via de officiële link** hierboven. Een projectbestand (`.json`) kun je gerust openen; een HTML-bestand van iemand anders open je beter niet.
+- Bewaar je projecten ook als bestand: *Document → Opslaan als → Ook als bestand op mijn computer bewaren (.json)*. Wis je de gegevens van je browser, dan zijn de projecten in die browser weg.
 
-## Internet
+## Oudere projecten
 
-Het programma werkt zonder internet. Alleen voor **PDF maken**, een **PDF als achtergrond** op het situatieplan en **exporteren naar Excel** wordt op dat moment een hulponderdeel opgehaald van cdnjs.cloudflare.com.
+Projectbestanden van **elke vorige versie** openen in de nieuwste versie. Ze worden indien nodig automatisch omgezet, met eerst een reservekopie. Een bestand van een nieuwere versie geeft een waarschuwing.
+
+Vorige versies van het programma vind je bij **Releases**.
 
 ## Talen
 
@@ -42,7 +46,7 @@ Nederlands, Français, English (keuze rechtsboven in het programma).
 
 VoltSchematix is een hulpmiddel om plannen te tekenen. Het controleert niet of een installatie aan de geldende voorschriften voldoet. De gebruiker blijft zelf verantwoordelijk voor de juistheid van de plannen.
 
-Gratis te gebruiken onder de [MIT-licentie](LICENSE), zonder enige garantie.
+Gratis te gebruiken onder de [MIT-licentie](LICENSE), zonder enige garantie. Ingebouwde onderdelen van derden (jsPDF, PDF.js, SheetJS): zie [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt).
 
 ---
 
@@ -50,22 +54,24 @@ Gratis te gebruiken onder de [MIT-licentie](LICENSE), zonder enige garantie.
 
 VoltSchematix est un programme gratuit pour réaliser les plans d'une installation électrique : **schéma unifilaire**, **plan de situation**, **liste des circuits** et **liste de matériel**, réunis dans un seul PDF.
 
-- **En ligne :** ouvrez le lien GitHub Pages de cette page.
-- **Hors ligne :** téléchargez `index.html` et double-cliquez dessus.
+- **En ligne :** https://voltschematix.github.io/voltschematix/
+- **Hors ligne :** ouvrez le lien, appuyez sur **Ctrl+S** et choisissez **« Page Web, HTML uniquement »**. Tout fonctionne ensuite sans internet, y compris le PDF, Excel et un PDF comme fond.
 - Fonctionne au mieux dans Chrome ou Edge sur ordinateur.
-- Vos données restent dans votre navigateur ; rien n'est envoyé. Enregistrez aussi vos projets comme fichier `.json`.
+- Vos données restent dans votre navigateur ; le programme ne fait aucune connexion internet. Téléchargez-le uniquement via le lien officiel.
+- Les fichiers de projet (`.json`) de toutes les versions précédentes s'ouvrent dans la dernière version.
 - Le manuel complet se trouve dans le programme (onglet **Manuel** ou bouton **?**).
 
-VoltSchematix est un outil de dessin. Il ne vérifie pas la conformité d'une installation aux prescriptions en vigueur ; l'utilisateur reste responsable de l'exactitude des plans. Licence MIT, sans garantie.
+VoltSchematix est un outil de dessin. Il ne vérifie pas la conformité d'une installation aux prescriptions en vigueur ; l'utilisateur reste responsable de l'exactitude des plans. Licence MIT, sans garantie. Composants tiers : voir THIRD-PARTY-LICENSES.txt.
 
 ## English
 
 VoltSchematix is a free program to draw the plans of an electrical installation: **single-line diagram**, **site plan**, **list of circuits** and **material list**, combined in one PDF.
 
-- **Online:** open this repository's GitHub Pages link.
-- **Offline:** download `index.html` and double-click it.
+- **Online:** https://voltschematix.github.io/voltschematix/
+- **Offline:** open the link, press **Ctrl+S** and choose **"Webpage, HTML Only"**. Everything then works without internet, including PDF, Excel and a PDF as background.
 - Works best in Chrome or Edge on a computer.
-- Your data stays in your browser; nothing is sent anywhere. Also save your projects as a `.json` file.
+- Your data stays in your browser; the program makes no internet connection at all. Only download it from the official link.
+- Project files (`.json`) from every previous version open in the latest version.
 - The full manual is inside the program (**Manual** tab or the **?** button).
 
-VoltSchematix is a drawing tool. It does not check whether an installation complies with the applicable regulations; the user remains responsible for the correctness of the plans. MIT licence, no warranty.
+VoltSchematix is a drawing tool. It does not check whether an installation complies with the applicable regulations; the user remains responsible for the correctness of the plans. MIT licence, no warranty. Third-party components: see THIRD-PARTY-LICENSES.txt.
