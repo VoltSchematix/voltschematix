@@ -10,7 +10,7 @@ Het programma is één enkel bestand (`index.html`) dat in je browser werkt. Je 
 
 **Online:** open **https://voltschematix.github.io/voltschematix/**
 
-**Offline:** open de link, druk op **Ctrl+S** en kies **"Webpagina, alleen HTML"**. Dubbelklik later op dat bestand. Alles werkt dan zonder internet, ook PDF maken, Excel en een PDF als achtergrond.
+**Offline:** open de link, open het menu van de browser (⋮ of …) en kies **Pagina opslaan als** (Chrome: onder *Opslaan en delen*; Edge: onder *Meer hulpprogramma's*). Kies **"Webpagina, alleen HTML"** en dubbelklik later op dat bestand. Je kunt ook hierboven `index.html` openen en op het downloadpijltje klikken. Alles werkt dan zonder internet, ook PDF maken, Excel en een PDF als achtergrond.
 
 Werkt het best in **Chrome** of **Edge** op een computer. Firefox en Safari werken ook.
 
@@ -22,6 +22,8 @@ Werkt het best in **Chrome** of **Edge** op een computer. Firefox en Safari werk
 4. **Materiaallijst:** kijk de lijst na en vul de kabellengtes in.
 5. **Afdrukken:** maak één PDF of druk rechtstreeks af.
 
+Druk tussendoor op **Ctrl+S** om je project als bestand op te slaan. Je projecten vind je terug op het tabblad **Mijn projecten**.
+
 Een volledige handleiding, met woordenlijst en sneltoetsen, staat in het programma zelf (tabblad **Handleiding**, of de knop **?** rechtsboven).
 
 ## Je gegevens en veiligheid
@@ -30,7 +32,9 @@ Een volledige handleiding, met woordenlijst en sneltoetsen, staat in het program
 - Het programma maakt **geen enkele internetverbinding**. Alle onderdelen zitten in het bestand zelf.
 - Een strikte beveiligingsregel laat alleen de eigen code van het programma draaien. Projectbestanden worden bij het openen gecontroleerd en opgeschoond.
 - Haal het programma **alleen via de officiële link** hierboven. Een projectbestand (`.json`) kun je gerust openen; een HTML-bestand van iemand anders open je beter niet.
-- Bewaar je projecten ook als bestand: *Document → Opslaan als → Ook als bestand op mijn computer bewaren (.json)*. Wis je de gegevens van je browser, dan zijn de projecten in die browser weg.
+- Je project bewaar je als **bestand op je computer** (.json), in een map naar keuze: *Opslaan* (Ctrl+S) of *Opslaan als*. In Chrome en Edge verschijnt het gewone Windows-venster en bewaart *Opslaan* daarna telkens in hetzelfde bestand; in andere browsers komt het bestand in *Downloads*.
+- Op het tabblad **Mijn projecten** vind je al je projectbestanden terug, met naam, klant en adres. Kies er een **projectmap** en alle projecten in die map verschijnen vanzelf.
+- Het programma maakt daarnaast automatisch **reservekopieën** in je browser, als vangnet. Dat is geen veilige opslag: je project is pas echt veilig in het bestand.
 
 ## Oudere projecten
 
@@ -55,9 +59,10 @@ Gratis te gebruiken onder de [MIT-licentie](LICENSE), zonder enige garantie. Ing
 VoltSchematix est un programme gratuit pour réaliser les plans d'une installation électrique : **schéma unifilaire**, **plan de situation**, **liste des circuits** et **liste de matériel**, réunis dans un seul PDF.
 
 - **En ligne :** https://voltschematix.github.io/voltschematix/
-- **Hors ligne :** ouvrez le lien, appuyez sur **Ctrl+S** et choisissez **« Page Web, HTML uniquement »**. Tout fonctionne ensuite sans internet, y compris le PDF, Excel et un PDF comme fond.
+- **Hors ligne :** ouvrez le lien, puis le menu du navigateur (⋮ ou …) → **Enregistrer la page sous** → **« Page Web, HTML uniquement »**. Ou ouvrez `index.html` ci-dessus et cliquez sur la flèche de téléchargement. Tout fonctionne ensuite sans internet, y compris le PDF, Excel et un PDF comme fond.
 - Fonctionne au mieux dans Chrome ou Edge sur ordinateur.
-- Vos données restent dans votre navigateur ; le programme ne fait aucune connexion internet. Téléchargez-le uniquement via le lien officiel.
+- Vos données restent sur votre ordinateur ; le programme ne fait aucune connexion internet. Enregistrez votre projet comme fichier (.json) dans le dossier de votre choix (Chrome/Edge) ou dans Téléchargements. Téléchargez le programme uniquement via le lien officiel.
+- L'onglet **Mes projets** affiche tous vos fichiers de projet (nom, client, adresse). Le programme fait aussi des copies de sauvegarde automatiques dans le navigateur, comme filet de sécurité temporaire.
 - Les fichiers de projet (`.json`) de toutes les versions précédentes s'ouvrent dans la dernière version.
 - Le manuel complet se trouve dans le programme (onglet **Manuel** ou bouton **?**).
 
@@ -68,9 +73,10 @@ VoltSchematix est un outil de dessin. Il ne vérifie pas la conformité d'une in
 VoltSchematix is a free program to draw the plans of an electrical installation: **single-line diagram**, **site plan**, **list of circuits** and **material list**, combined in one PDF.
 
 - **Online:** https://voltschematix.github.io/voltschematix/
-- **Offline:** open the link, press **Ctrl+S** and choose **"Webpage, HTML Only"**. Everything then works without internet, including PDF, Excel and a PDF as background.
+- **Offline:** open the link, then the browser menu (⋮ or …) → **Save page as** → **"Webpage, HTML Only"**. Or open `index.html` above and click the download arrow. Everything then works without internet, including PDF, Excel and a PDF as background.
 - Works best in Chrome or Edge on a computer.
-- Your data stays in your browser; the program makes no internet connection at all. Only download it from the official link.
+- Your data stays on your computer; the program makes no internet connection at all. Save your project as a file (.json) in a folder of your choice (Chrome/Edge) or in Downloads. Only download the program from the official link.
+- The **My projects** tab shows all your project files (name, client, address). The program also makes automatic backups in the browser, as a temporary safety net.
 - Project files (`.json`) from every previous version open in the latest version.
 - The full manual is inside the program (**Manual** tab or the **?** button).
 
