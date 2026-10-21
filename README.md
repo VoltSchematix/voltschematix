@@ -2,6 +2,8 @@
 
 **NL** · [FR](#français) · [EN](#english)
 
+**Versie 1.0** · Version 1.0
+
 VoltSchematix is een gratis programma om de plannen van een elektrische installatie te maken: het **eendraadschema**, het **situatieplan**, de **lijst met kringen** en de **materiaallijst**. Alles samen maak je in één PDF, klaar om af te drukken of te bezorgen.
 
 Het programma is één enkel bestand (`index.html`) dat in je browser werkt. Je hoeft niets te installeren en geen account aan te maken.
@@ -12,7 +14,9 @@ Het programma is één enkel bestand (`index.html`) dat in je browser werkt. Je 
 
 **Offline:** open de link, open het menu van de browser (⋮ of …) en kies **Pagina opslaan als** (Chrome: onder *Opslaan en delen*; Edge: onder *Meer hulpprogramma's*). Kies **"Webpagina, alleen HTML"** en dubbelklik later op dat bestand. Je kunt ook hierboven `index.html` openen en op het downloadpijltje klikken. Alles werkt dan zonder internet, ook PDF maken, Excel en een PDF als achtergrond.
 
-Werkt het best in **Chrome** of **Edge** op een computer. Firefox en Safari werken ook.
+Werkt het best in **Chrome** of **Edge** op een computer. Firefox en Safari werken ook; daar komt een opgeslagen project in *Downloads*.
+
+Op **gsm en tablet** (iPhone, iPad, Android) werkt het ook, met aanraken: tikken, knijpen om te zoomen, slepen om te schuiven. Opslaan gaat daar als download (iPhone/iPad: *Bewaar in Bestanden*, Android: *Downloads*). Tekenen gaat het vlotst op een tablet of computer.
 
 ## Hoe begin je?
 
@@ -60,7 +64,7 @@ VoltSchematix est un programme gratuit pour réaliser les plans d'une installati
 
 - **En ligne :** https://voltschematix.github.io/voltschematix/
 - **Hors ligne :** ouvrez le lien, puis le menu du navigateur (⋮ ou …) → **Enregistrer la page sous** → **« Page Web, HTML uniquement »**. Ou ouvrez `index.html` ci-dessus et cliquez sur la flèche de téléchargement. Tout fonctionne ensuite sans internet, y compris le PDF, Excel et un PDF comme fond.
-- Fonctionne au mieux dans Chrome ou Edge sur ordinateur.
+- Fonctionne au mieux dans Chrome ou Edge sur ordinateur. Fonctionne aussi sur smartphone et tablette (iPhone, iPad, Android), au toucher ; l'enregistrement s'y fait par téléchargement (iPhone/iPad : *Enregistrer dans Fichiers*).
 - Vos données restent sur votre ordinateur ; le programme ne fait aucune connexion internet. Enregistrez votre projet comme fichier (.json) dans le dossier de votre choix (Chrome/Edge) ou dans Téléchargements. Téléchargez le programme uniquement via le lien officiel.
 - L'onglet **Mes projets** affiche tous vos fichiers de projet (nom, client, adresse). Le programme fait aussi des copies de sauvegarde automatiques dans le navigateur, comme filet de sécurité temporaire.
 - Les fichiers de projet (`.json`) de toutes les versions précédentes s'ouvrent dans la dernière version.
@@ -74,7 +78,7 @@ VoltSchematix is a free program to draw the plans of an electrical installation:
 
 - **Online:** https://voltschematix.github.io/voltschematix/
 - **Offline:** open the link, then the browser menu (⋮ or …) → **Save page as** → **"Webpage, HTML Only"**. Or open `index.html` above and click the download arrow. Everything then works without internet, including PDF, Excel and a PDF as background.
-- Works best in Chrome or Edge on a computer.
+- Works best in Chrome or Edge on a computer. Also works on phones and tablets (iPhone, iPad, Android) with touch; saving there is a download (iPhone/iPad: *Save to Files*).
 - Your data stays on your computer; the program makes no internet connection at all. Save your project as a file (.json) in a folder of your choice (Chrome/Edge) or in Downloads. Only download the program from the official link.
 - The **My projects** tab shows all your project files (name, client, address). The program also makes automatic backups in the browser, as a temporary safety net.
 - Project files (`.json`) from every previous version open in the latest version.
