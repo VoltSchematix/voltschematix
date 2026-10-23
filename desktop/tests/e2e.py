@@ -128,6 +128,9 @@ class Remote:
 
 
 class RealFS:
+    def mkdir(self, p):
+        os.makedirs(p, exist_ok=True)
+
     def write(self, p, text):
         os.makedirs(os.path.dirname(p), exist_ok=True)
         open(p, 'w', encoding='utf-8').write(text)
@@ -153,9 +156,21 @@ window.__t=window.__t||{
 
 def test(d, fs, fix, exp, work, check):
     W = lambda *p: PJ.join(work, *p)
+    if hasattr(fs, 'mkdir'):  # zoals in een echt Windows-venster: je bewaart altijd in een bestaande map
+        fs.mkdir(W('uit'))
     d.start()
     d.run(HELP + "await __t.until(()=>window.AEP_project&&document.readyState==='complete');await __t.sleep(1500);await __t.settle();")
     check(d.run("return document.body.classList.contains('desktop')&&!!window.__TAURI__"), 'programma gestart, aansluiting op Windows actief')
+    # diagnose: rechtstreeks een paar opdrachten van het programma aanroepen
+    fs.write(W('diag', 'proef.json'), '{}')
+    d.queue(W('diag', 'proef.json'))
+    diag = d.run("const I=window.__TAURI__.core.invoke,r={};"
+                 "for(const [k,f] of [['launch',()=>I('launch_file')],['pick',()=>I('vs_pick_open',{dir:null})]]){try{r[k]=await f()}catch(e){r[k]='FOUT: '+String(e&&e.message||e)}}"
+                 "if(typeof r.pick==='string'&&!r.pick.startsWith('FOUT')){try{r.stat=await I('vs_stat',{path:r.pick})}catch(e){r.stat='FOUT: '+String(e&&e.message||e)}}"
+                 "r.errs=window.AEP_errs;r.ext=window.AEP_EXT;r.sfp=typeof window.showSaveFilePicker;return r")
+    print('  ...  diagnose:', json.dumps(diag, ensure_ascii=False)[:1500], flush=True)
+    qf = getattr(d, 'queue_file', None)
+    print('  ...  wachtrij-bestand:', qf, bool(qf) and os.path.exists(qf), flush=True)
     names = sorted(f[:-5] for f in os.listdir(fix) if f.endswith('.json'))
     first_out = None
     for n in names:
@@ -167,6 +182,11 @@ def test(d, fs, fix, exp, work, check):
         d.queue(out)
         msg = d.run(HELP + "__t.$('pj_saveas').click();return await __t.until(()=>/Opgeslagen/.test(__t.$('pj_msg').textContent)&&__t.$('pj_msg').textContent)")
         got = fs.read(out)
+        if not got:
+            st = d.run(HELP + "return {name:__t.$('pj_name').textContent,msg:__t.$('pj_msg').textContent,dlg:__t.dlg(),errs:window.AEP_errs}")
+            print('  ...  toestand:', json.dumps(st, ensure_ascii=False)[:1200], '| wachtrij:', repr(open(d.queue_file, encoding='utf-8').read()[:300]) if getattr(d, 'queue_file', None) else '-', flush=True)
+            check(False, f'{n}: opslaan maakte geen bestand – test gestopt (zie toestand hierboven)')
+            return
         expd = json.loads(open(os.path.join(exp, n + '.json'), encoding='utf-8').read())
         ids = '"id"' in src  # heel oude bestanden hebben nog geen id's: die maakt het programma zelf aan
         if got and not same(json.loads(got), expd, ids):
