@@ -1,0 +1,152 @@
+# Bouwt het programma voor Windows (VoltSchematix-Setup.exe) en zet het als concept bij Releases.
+# Starten: tabblad Actions → "Programma voor Windows" → Run workflow.
+#
+# Volgorde:
+#   1. test    – Rust-tests + een echte eindtest van het programma op Windows (openen, opslaan,
+#                PDF, Excel, toegangsbeveiliging, compatibiliteit met de online versie).
+#   2. release – enkel als alle tests geslaagd zijn: het installatieprogramma bouwen,
+#                als concept bij Releases zetten en er een SHA256SUMS.txt bij plaatsen.
+#
+# Alle externe acties staan vast op een exacte versie (commit-SHA), zodat niemand ze
+# achteraf ongemerkt kan wijzigen.
+name: Programma voor Windows
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Testen op Windows
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Node installeren
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: lts/*
+
+      - name: Python installeren
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Rust installeren
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+
+      - name: Rust-cache
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: desktop/src-tauri
+
+      - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
+        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+
+      - name: Bouwhulpmiddelen installeren
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Testversie bouwen (zonder installatieprogramma)
+        working-directory: desktop
+        run: npm run tauri build -- --no-bundle --features e2e
+
+      - name: Testhulpmiddelen installeren (tauri-driver en Edge WebDriver)
+        shell: pwsh
+        run: |
+          cargo install tauri-driver --version 2.1.0 --locked
+          cargo install --git https://github.com/chippers/msedgedriver-tool --rev 8c4b34f51b45f5cf08013366d703de464ab871d1 --locked
+          New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\driver" | Out-Null
+          Push-Location "$env:RUNNER_TEMP\driver"
+          msedgedriver-tool
+          Pop-Location
+
+      - name: Eindtest van het programma
+        shell: pwsh
+        env:
+          VS_E2E_QUEUE: ${{ runner.temp }}\wachtrij.txt
+          PYTHONIOENCODING: utf-8
+        run: |
+          New-Item -ItemType File -Force -Path $env:VS_E2E_QUEUE | Out-Null
+          $exe = Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File | Where-Object { $_.Name -ieq 'voltschematix.exe' } | Select-Object -First 1
+          if (-not $exe) { Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File; throw 'Programma niet gevonden' }
+          $drv = Start-Process -FilePath tauri-driver -ArgumentList '--native-driver', "$env:RUNNER_TEMP\driver\msedgedriver.exe" -PassThru -NoNewWindow -RedirectStandardOutput "$env:RUNNER_TEMP\driver.log" -RedirectStandardError "$env:RUNNER_TEMP\driver.err"
+          Start-Sleep -Seconds 5
+          try {
+            python desktop/tests/e2e.py $exe.FullName desktop/tests/fixtures desktop/tests/expected "$env:RUNNER_TEMP\e2e"
+            $code = $LASTEXITCODE
+          } finally {
+            Stop-Process -Id $drv.Id -Force -ErrorAction SilentlyContinue
+          }
+          if ($code -ne 0) {
+            Write-Host '--- tauri-driver ---'
+            Get-Content "$env:RUNNER_TEMP\driver.log","$env:RUNNER_TEMP\driver.err" -ErrorAction SilentlyContinue
+            exit $code
+          }
+
+  release:
+    name: Programma bouwen en bij Releases zetten
+    needs: test
+    runs-on: windows-latest
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Node installeren
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: lts/*
+
+      - name: Rust installeren
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+
+      - name: Bouwhulpmiddelen installeren
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Programma bouwen en bij Releases zetten
+        id: tauri
+        uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: desktop
+          tauriScript: npm run tauri
+          tagName: v__VERSION__
+          releaseName: VoltSchematix __VERSION__ voor Windows
+          releaseBody: |
+            Download **VoltSchematix_…_x64-setup.exe** hieronder bij *Assets* en open het om te installeren.
+            Windows kan waarschuwen dat de uitgever onbekend is: klik dan op *Meer informatie* → *Toch uitvoeren*.
+            Projecten (.vsx en .json) zijn uitwisselbaar met de online versie: https://voltschematix.github.io/voltschematix/
+
+            **Controle (optioneel):** bij *Assets* staat `SHA256SUMS.txt`. In PowerShell:
+            `Get-FileHash .\VoltSchematix_…_x64-setup.exe` – de code moet gelijk zijn aan die in het bestand.
+          releaseDraft: true
+          prerelease: false
+
+      - name: Controlecodes (SHA-256) maken en bij de release zetten
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ steps.tauri.outputs.releaseId }}
+        run: |
+          $files = Get-ChildItem desktop\src-tauri\target\release\bundle -Recurse -File -Include *.exe,*.msi
+          if (-not $files) { throw 'Geen installatiebestand gevonden' }
+          $lines = foreach ($f in $files) { '{0}  {1}' -f (Get-FileHash $f.FullName -Algorithm SHA256).Hash.ToLower(), $f.Name }
+          $sums = Join-Path $env:RUNNER_TEMP 'SHA256SUMS.txt'
+          [IO.File]::WriteAllText($sums, (($lines -join "`n") + "`n"))
+          Get-Content $sums
+          "### SHA-256`n``````n$(Get-Content $sums -Raw)``````" | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
+          $uri = "https://uploads.github.com/repos/$env:GITHUB_REPOSITORY/releases/$env:RELEASE_ID/assets?name=SHA256SUMS.txt"
+          Invoke-RestMethod -Method Post -Uri $uri -InFile $sums -ContentType 'text/plain' -Headers @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' } | Out-Null
