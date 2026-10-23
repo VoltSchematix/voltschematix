@@ -1,6 +1,6 @@
 """Eindtest van het echte programma voor Windows (wordt automatisch uitgevoerd bij het bouwen op GitHub).
 
-Het programma wordt gestart via Microsoft Edge WebDriver (WebView2-modus). De testversie slaat de Windows-vensters over:
+Het programma wordt gestart met een WebView2-debugpoort; Microsoft Edge WebDriver koppelt eraan. De testversie slaat de Windows-vensters over:
 welk bestand of welke map "gekozen" wordt, komt uit een wachtrij (VS_E2E_QUEUE).
 Gebruik: python e2e.py PROGRAMMA.exe FIXTURES EXPECTED WERKMAP
 """
@@ -39,8 +39,13 @@ class Remote:
         with urllib.request.urlopen(r, timeout=timeout) as resp:
             return json.loads(resp.read().decode() or '{}')
 
+    DBG = 9222
+
     def start(self):
+        """Start het programma zelf met een debugpoort voor WebView2 en koppel Edge WebDriver eraan
+        (werkwijze van Microsoft: 'attach to a running WebView2 app' via debuggerAddress)."""
         print('  ...  wachten op Edge WebDriver', flush=True)
+        err = None
         for _ in range(30):
             try:
                 print('  ...  WebDriver status:', json.dumps(self._req('GET', '/status', timeout=10).get('value')), flush=True)
@@ -50,38 +55,63 @@ class Remote:
                 time.sleep(2)
         else:
             raise SystemExit(f'Edge WebDriver antwoordt niet: {err}')
-        # rechtstreeks naar Microsoft Edge WebDriver (WebView2-modus), zoals tauri-driver het ook doorgeeft
-        caps = {'capabilities': {'alwaysMatch': {'browserName': 'webview2', 'ms:edgeChromium': True,
-                                                 'ms:edgeOptions': {'binary': self.exe, 'args': [], 'webviewOptions': {}}}}}
-        for i in range(3):
-            print(f'  ...  programma starten (poging {i + 1})', flush=True)
+        import subprocess
+        env = dict(os.environ)
+        env['WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS'] = f'--remote-debugging-port={self.DBG}'
+        self.logf = os.path.join(os.path.dirname(self.queue_file), 'programma.log')
+        print('  ...  programma starten', flush=True)
+        with open(self.logf, 'ab') as lg:
+            self.proc = subprocess.Popen([self.exe], env=env, stdout=lg, stderr=lg)
+        ok = False
+        for _ in range(60):
+            if self.proc.poll() is not None:
+                print(f'  ...  het programma is meteen afgesloten (code {self.proc.returncode})', flush=True)
+                print(open(self.logf, encoding='utf-8', errors='replace').read()[-3000:], flush=True)
+                raise SystemExit('programma valt uit bij het starten')
             try:
-                v = self._req('POST', '/session', caps, timeout=120)['value']
-                if 'sessionId' not in v:
-                    raise RuntimeError(json.dumps(v)[:800])
-                self.sid = v['sessionId']
+                with urllib.request.urlopen(f'http://127.0.0.1:{self.DBG}/json/version', timeout=3) as r:
+                    print('  ...  debugpoort open:', r.read().decode()[:200], flush=True)
+                ok = True
                 break
-            except urllib.error.HTTPError as e:
-                print('  ...  fout:', e.code, e.read().decode(errors='replace')[:1500], flush=True)
-            except Exception as e:
-                print('  ...  fout:', repr(e)[:1500], flush=True)
-            time.sleep(3)
-        if not self.sid:
-            if os.name == 'nt':
-                import subprocess
-                print(subprocess.run(['tasklist', '/FI', 'IMAGENAME eq voltschematix.exe'], capture_output=True, text=True).stdout, flush=True)
-            raise SystemExit('programma kon niet gestart worden via Edge WebDriver')
-        print('  ...  programma gestart', flush=True)
+            except Exception:
+                time.sleep(1)
+        if not ok:
+            print('  ...  programma draait wel, maar de debugpoort gaat niet open', flush=True)
+            self.proc.kill()
+            raise SystemExit('geen verbinding met het venster van het programma')
+        caps = {'capabilities': {'alwaysMatch': {'browserName': 'webview2', 'ms:edgeChromium': True,
+                                                 'ms:edgeOptions': {'debuggerAddress': f'127.0.0.1:{self.DBG}'}}}}
+        try:
+            v = self._req('POST', '/session', caps, timeout=120)['value']
+        except urllib.error.HTTPError as e:
+            print('  ...  fout:', e.code, e.read().decode(errors='replace')[:1500], flush=True)
+            raise SystemExit('Edge WebDriver kon niet koppelen')
+        self.sid = v['sessionId']
+        print('  ...  programma gestart en gekoppeld', flush=True)
         self._req('POST', f'/session/{self.sid}/timeouts', {'script': 180000})
 
     def stop(self):
         if self.sid:
             try:
-                self._req('DELETE', f'/session/{self.sid}')
+                self._req('DELETE', f'/session/{self.sid}', timeout=30)
             except Exception:
                 pass
             self.sid = None
-            time.sleep(2)
+        p = getattr(self, 'proc', None)
+        if p and p.poll() is None:
+            if os.name == 'nt':  # programma + bijhorende WebView2-processen netjes opruimen
+                import subprocess
+                subprocess.run(['taskkill', '/F', '/T', '/PID', str(p.pid)], capture_output=True)
+            p.kill()
+            try:
+                p.wait(20)
+            except Exception:
+                pass
+        if os.name == 'nt':
+            import subprocess
+            subprocess.run(['taskkill', '/F', '/IM', 'msedgewebview2.exe'], capture_output=True)
+        self.proc = None
+        time.sleep(3)
 
     def run(self, body, *args):
         script = ('const done=arguments[arguments.length-1];'
