@@ -14,6 +14,7 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::time::UNIX_EPOCH;
 use tauri::Manager;
+#[cfg(not(feature = "e2e"))]
 use tauri_plugin_dialog::DialogExt;
 
 /// Het bestand waarmee het programma gestart werd (dubbelklik op een .vsx-bestand).
@@ -130,6 +131,7 @@ fn e2e_next() -> Option<PathBuf> {
     }
 }
 
+#[cfg(not(feature = "e2e"))]
 fn parent_of(app: &tauri::AppHandle) -> Option<tauri::WebviewWindow> {
     app.get_webview_window("main")
 }
