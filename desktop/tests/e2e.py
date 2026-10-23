@@ -1,10 +1,10 @@
 """Eindtest van het echte programma voor Windows (wordt automatisch uitgevoerd bij het bouwen op GitHub).
 
-Het programma wordt gestart via tauri-driver (WebDriver). De testversie slaat de Windows-vensters over:
+Het programma wordt gestart via Microsoft Edge WebDriver (WebView2-modus). De testversie slaat de Windows-vensters over:
 welk bestand of welke map "gekozen" wordt, komt uit een wachtrij (VS_E2E_QUEUE).
 Gebruik: python e2e.py PROGRAMMA.exe FIXTURES EXPECTED WERKMAP
 """
-import json, os, sys, time, shutil, urllib.request
+import json, os, sys, time, shutil, urllib.request, urllib.error
 
 PJ = os.path  # paden in de werkmap (bij de test hier: Windows-paden)
 
@@ -33,23 +33,45 @@ class Remote:
     def __init__(self, exe, queue, port=4444):
         self.exe, self.queue_file, self.base, self.sid = exe, queue, f'http://127.0.0.1:{port}', None
 
-    def _req(self, method, path, body=None):
+    def _req(self, method, path, body=None, timeout=300):
         data = None if body is None else json.dumps(body).encode()
         r = urllib.request.Request(self.base + path, data=data, method=method, headers={'Content-Type': 'application/json'})
-        with urllib.request.urlopen(r, timeout=300) as resp:
+        with urllib.request.urlopen(r, timeout=timeout) as resp:
             return json.loads(resp.read().decode() or '{}')
 
     def start(self):
-        caps = {'capabilities': {'alwaysMatch': {'browserName': 'wry', 'tauri:options': {'application': self.exe}}}}
+        print('  ...  wachten op Edge WebDriver', flush=True)
         for _ in range(30):
             try:
-                v = self._req('POST', '/session', caps)['value']
+                print('  ...  WebDriver status:', json.dumps(self._req('GET', '/status', timeout=10).get('value')), flush=True)
+                break
+            except Exception as e:
+                err = e
+                time.sleep(2)
+        else:
+            raise SystemExit(f'Edge WebDriver antwoordt niet: {err}')
+        # rechtstreeks naar Microsoft Edge WebDriver (WebView2-modus), zoals tauri-driver het ook doorgeeft
+        caps = {'capabilities': {'alwaysMatch': {'browserName': 'webview2', 'ms:edgeChromium': True,
+                                                 'ms:edgeOptions': {'binary': self.exe, 'args': [], 'webviewOptions': {}}}}}
+        for i in range(3):
+            print(f'  ...  programma starten (poging {i + 1})', flush=True)
+            try:
+                v = self._req('POST', '/session', caps, timeout=120)['value']
+                if 'sessionId' not in v:
+                    raise RuntimeError(json.dumps(v)[:800])
                 self.sid = v['sessionId']
                 break
-            except Exception:
-                time.sleep(2)
+            except urllib.error.HTTPError as e:
+                print('  ...  fout:', e.code, e.read().decode(errors='replace')[:1500], flush=True)
+            except Exception as e:
+                print('  ...  fout:', repr(e)[:1500], flush=True)
+            time.sleep(3)
         if not self.sid:
-            raise SystemExit('programma kon niet gestart worden via tauri-driver')
+            if os.name == 'nt':
+                import subprocess
+                print(subprocess.run(['tasklist', '/FI', 'IMAGENAME eq voltschematix.exe'], capture_output=True, text=True).stdout, flush=True)
+            raise SystemExit('programma kon niet gestart worden via Edge WebDriver')
+        print('  ...  programma gestart', flush=True)
         self._req('POST', f'/session/{self.sid}/timeouts', {'script': 180000})
 
     def stop(self):
