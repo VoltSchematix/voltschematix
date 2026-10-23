@@ -1,0 +1,22 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Wat het venster van VoltSchematix mag: een melding of vraag tonen, het eigen venster sluiten en de downloadpagina in de browser openen. Bestanden kiezen en lezen/schrijven gebeurt uitsluitend via de eigen, gecontroleerde opdrachten in main.rs.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "core:window:allow-close",
+    "core:window:allow-destroy",
+    "dialog:allow-message",
+    {
+      "identifier": "opener:allow-open-url",
+      "allow": [
+        {
+          "url": "https://github.com/VoltSchematix/voltschematix/*"
+        }
+      ]
+    }
+  ]
+}
