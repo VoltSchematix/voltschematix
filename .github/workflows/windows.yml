@@ -57,15 +57,15 @@ jobs:
         working-directory: desktop
         run: npm run tauri build -- --no-bundle --features e2e
 
-      - name: Testhulpmiddelen installeren (tauri-driver en Edge WebDriver)
+      - name: Testhulpmiddel installeren (Edge WebDriver, passend bij WebView2)
         shell: pwsh
         run: |
-          cargo install tauri-driver --version 2.1.0 --locked
           cargo install --git https://github.com/chippers/msedgedriver-tool --rev 8c4b34f51b45f5cf08013366d703de464ab871d1 --locked
           New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\driver" | Out-Null
           Push-Location "$env:RUNNER_TEMP\driver"
           msedgedriver-tool
           Pop-Location
+          & "$env:RUNNER_TEMP\driver\msedgedriver.exe" --version
 
       - name: Eindtest van het programma
         shell: pwsh
@@ -77,19 +77,27 @@ jobs:
           New-Item -ItemType File -Force -Path $env:VS_E2E_QUEUE | Out-Null
           $exe = Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File | Where-Object { $_.Name -ieq 'voltschematix.exe' } | Select-Object -First 1
           if (-not $exe) { Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File; throw 'Programma niet gevonden' }
-          $drv = Start-Process -FilePath tauri-driver -ArgumentList '--native-driver', "$env:RUNNER_TEMP\driver\msedgedriver.exe" -PassThru -NoNewWindow -RedirectStandardOutput "$env:RUNNER_TEMP\driver.log" -RedirectStandardError "$env:RUNNER_TEMP\driver.err"
-          Start-Sleep -Seconds 5
-          & "$env:RUNNER_TEMP\driver\msedgedriver.exe" --version
+          Write-Host "Programma: $($exe.FullName)"
+          $drv = Start-Process -FilePath "$env:RUNNER_TEMP\driver\msedgedriver.exe" -ArgumentList '--port=4444', '--verbose', "--log-path=$env:RUNNER_TEMP\driver.log" -PassThru -NoNewWindow
+          Start-Sleep -Seconds 3
           $code = 1
           try {
             python desktop/tests/e2e.py $exe.FullName desktop/tests/fixtures desktop/tests/expected "$env:RUNNER_TEMP\e2e"
             $code = $LASTEXITCODE
           } finally {
             Stop-Process -Id $drv.Id -Force -ErrorAction SilentlyContinue
+            Get-Process voltschematix -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
           }
-          Write-Host '--- meldingen van tauri-driver ---'
-          Get-Content "$env:RUNNER_TEMP\driver.log","$env:RUNNER_TEMP\driver.err" -ErrorAction SilentlyContinue | Select-Object -Last 80
           exit $code
+
+      - name: Meldingen van Edge WebDriver (enkel bij een fout)
+        if: failure()
+        shell: pwsh
+        run: |
+          $log = "$env:RUNNER_TEMP\driver.log"
+          if (Test-Path $log) {
+            Get-Content $log | Where-Object { $_ -notmatch 'DevTools WebSocket (Event|Response|Command): (Page|Runtime|Log|Network)\.' } | Select-Object -Last 120
+          } else { Write-Host 'geen logbestand' }
 
   release:
     name: Programma bouwen en bij Releases zetten
