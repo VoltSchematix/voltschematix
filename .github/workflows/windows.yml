@@ -55,7 +55,7 @@ jobs:
 
       - name: Testversie bouwen (zonder installatieprogramma)
         working-directory: desktop
-        run: npm run tauri build -- --no-bundle --features e2e
+        run: npm run tauri build -- --no-bundle --features e2e --config src-tauri/tauri.e2e.conf.json
 
       - name: Testhulpmiddel installeren (Edge WebDriver, passend bij WebView2)
         shell: pwsh
