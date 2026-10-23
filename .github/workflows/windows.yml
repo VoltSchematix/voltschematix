@@ -69,6 +69,7 @@ jobs:
 
       - name: Eindtest van het programma
         shell: pwsh
+        timeout-minutes: 25
         env:
           VS_E2E_QUEUE: ${{ runner.temp }}\wachtrij.txt
           PYTHONIOENCODING: utf-8
@@ -78,17 +79,17 @@ jobs:
           if (-not $exe) { Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File; throw 'Programma niet gevonden' }
           $drv = Start-Process -FilePath tauri-driver -ArgumentList '--native-driver', "$env:RUNNER_TEMP\driver\msedgedriver.exe" -PassThru -NoNewWindow -RedirectStandardOutput "$env:RUNNER_TEMP\driver.log" -RedirectStandardError "$env:RUNNER_TEMP\driver.err"
           Start-Sleep -Seconds 5
+          & "$env:RUNNER_TEMP\driver\msedgedriver.exe" --version
+          $code = 1
           try {
             python desktop/tests/e2e.py $exe.FullName desktop/tests/fixtures desktop/tests/expected "$env:RUNNER_TEMP\e2e"
             $code = $LASTEXITCODE
           } finally {
             Stop-Process -Id $drv.Id -Force -ErrorAction SilentlyContinue
           }
-          if ($code -ne 0) {
-            Write-Host '--- tauri-driver ---'
-            Get-Content "$env:RUNNER_TEMP\driver.log","$env:RUNNER_TEMP\driver.err" -ErrorAction SilentlyContinue
-            exit $code
-          }
+          Write-Host '--- meldingen van tauri-driver ---'
+          Get-Content "$env:RUNNER_TEMP\driver.log","$env:RUNNER_TEMP\driver.err" -ErrorAction SilentlyContinue | Select-Object -Last 80
+          exit $code
 
   release:
     name: Programma bouwen en bij Releases zetten
