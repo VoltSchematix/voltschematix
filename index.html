@@ -124,6 +124,9 @@ header.app{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background
 .bar{display:flex;align-items:center;gap:16px;padding-block:14px 0;flex-wrap:wrap}
 .brand{display:flex;align-items:center;gap:10px;font-family:var(--f-display);font-weight:700;font-size:22px;letter-spacing:.02em}
 .brand svg{flex:none}
+.brand-dl{margin-left:14px;font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:4px;padding:5px 10px;white-space:nowrap}.brand-dl:hover,.brand-dl:focus-visible{color:var(--ink);border-color:var(--accent)}
+body.work .brand-dl,body.narrow .brand-dl,body.touch .brand-dl,body.desktop .brand-dl{display:none}
+@media (max-width:1300px){.brand-dl{display:none}}
 .brand small{font-family:var(--f-mono);font-weight:400;font-size:11px;color:var(--muted);letter-spacing:0}
 .tabs{display:flex;gap:2px;overflow-x:auto;margin-top:10px;scrollbar-width:none}
 .tab{appearance:none;border:0;background:none;color:var(--muted);font-family:var(--f-display);font-weight:600;font-size:16px;letter-spacing:.04em;text-transform:uppercase;padding:10px 14px;border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap;display:flex;gap:8px;align-items:center}
@@ -700,6 +703,7 @@ body.touch .tkeys[hidden]{display:none}
     <div class="brand">
       <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="1" width="24" height="24" rx="4" fill="var(--accent)"/><path d="M14.5 4 7 14.5h5L10.5 22 19 11h-5.2z" fill="var(--accent-ink)"/></svg>
       <span class="bn no-i18n" aria-label="VoltSchematix"><span class="bn-v">Volt</span><span class="bn-s">Schematix</span></span> <small>v1.0</small>
+      <a class="brand-dl" id="hdr_dl" href="https://github.com/VoltSchematix/voltschematix/releases/latest" target="_blank" rel="noopener noreferrer"><span aria-hidden="true">⬇</span> <span>Programma voor Windows</span></a>
     </div>
     <div class="pj">
       <span class="pj-name"><span class="lbl">Project</span> <b id="pj_name">Nieuw project</b> <span id="pj_dirty" class="pj-dirty" hidden>niet opgeslagen</span></span>
