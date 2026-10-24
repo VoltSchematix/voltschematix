@@ -5,7 +5,7 @@
 #   1. test    – Rust-tests + een echte eindtest van het programma op Windows (openen, opslaan,
 #                PDF, Excel, toegangsbeveiliging, compatibiliteit met de online versie).
 #   2. release – enkel als alle tests geslaagd zijn: het installatieprogramma bouwen,
-#                als concept bij Releases zetten en er een SHA256SUMS.txt bij plaatsen.
+#                als concept bij Releases zetten, met SHA256SUMS.txt en SBOM's (CycloneDX).
 #
 # Alle externe acties staan vast op een exacte versie (commit-SHA), zodat niemand ze
 # achteraf ongemerkt kan wijzigen.
@@ -141,10 +141,22 @@ jobs:
             Windows kan waarschuwen dat de uitgever onbekend is: klik dan op *Meer informatie* → *Toch uitvoeren*.
             Projecten (.vsx en .json) zijn uitwisselbaar met de online versie: https://voltschematix.github.io/voltschematix/
 
+            **Onderdelen (SBOM):** `sbom-windows.cdx.json` (programma) en `sbom-web.cdx.json` (ingebouwde bibliotheken), in CycloneDX-formaat.
+
             **Controle (optioneel):** bij *Assets* staat `SHA256SUMS.txt`. In PowerShell:
             `Get-FileHash .\VoltSchematix_…_x64-setup.exe` – de code moet gelijk zijn aan die in het bestand.
           releaseDraft: true
           prerelease: false
+
+      - name: SBOM maken (lijst van alle onderdelen, CycloneDX)
+        shell: pwsh
+        run: |
+          cargo install cargo-cyclonedx --version 0.5.9 --locked
+          cargo cyclonedx --manifest-path desktop/src-tauri/Cargo.toml -f json --spec-version 1.5 --override-filename sbom-windows
+          $f = Get-ChildItem desktop/src-tauri -Filter 'sbom-windows*.json' -File | Select-Object -First 1
+          if (-not $f) { throw 'SBOM niet gevonden' }
+          Copy-Item $f.FullName (Join-Path $env:RUNNER_TEMP 'sbom-windows.cdx.json')
+          Copy-Item sbom-web.cdx.json (Join-Path $env:RUNNER_TEMP 'sbom-web.cdx.json')
 
       - name: Controlecodes (SHA-256) maken en bij de release zetten
         shell: pwsh
@@ -159,5 +171,8 @@ jobs:
           [IO.File]::WriteAllText($sums, (($lines -join "`n") + "`n"))
           Get-Content $sums
           "### SHA-256`n``````n$(Get-Content $sums -Raw)``````" | Out-File -Append -Encoding utf8 $env:GITHUB_STEP_SUMMARY
-          $uri = "https://uploads.github.com/repos/$env:GITHUB_REPOSITORY/releases/$env:RELEASE_ID/assets?name=SHA256SUMS.txt"
-          Invoke-RestMethod -Method Post -Uri $uri -InFile $sums -ContentType 'text/plain' -Headers @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' } | Out-Null
+          foreach ($a in @(@($sums,'text/plain'), @((Join-Path $env:RUNNER_TEMP 'sbom-windows.cdx.json'),'application/json'), @((Join-Path $env:RUNNER_TEMP 'sbom-web.cdx.json'),'application/json'))) {
+            $name = Split-Path $a[0] -Leaf
+            $uri = "https://uploads.github.com/repos/$env:GITHUB_REPOSITORY/releases/$env:RELEASE_ID/assets?name=$name"
+            Invoke-RestMethod -Method Post -Uri $uri -InFile $a[0] -ContentType $a[1] -Headers @{ Authorization = "Bearer $env:GH_TOKEN"; Accept = 'application/vnd.github+json' } | Out-Null
+          }
