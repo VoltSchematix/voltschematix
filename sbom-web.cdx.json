@@ -1,0 +1,179 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:faedb270-552d-463c-b726-51240b889f13",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-24T15:07:16Z",
+    "component": {
+      "type": "application",
+      "bom-ref": "voltschematix-web",
+      "name": "VoltSchematix (webversie, index.html)",
+      "version": "1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "website",
+          "url": "https://voltschematix.github.io/voltschematix/"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/VoltSchematix/voltschematix"
+        }
+      ]
+    },
+    "properties": [
+      {
+        "name": "netwerk",
+        "value": "geen: CSP default-src none, connect-src enkel data: en blob:"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/jspdf@4.2.1",
+      "name": "jsPDF",
+      "version": "4.2.1",
+      "description": "PDF maken (ongewijzigd ingebouwd: jspdf.umd.min.js)",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "purl": "pkg:npm/jspdf@4.2.1",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e6551fcdc32f09d6853b2c5126d18d01d9447e0da618a41a11ebeee0f6c20d54"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/parallax/jsPDF"
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/pdfjs-dist@3.2.146",
+      "name": "PDF.js (pdfjs-dist)",
+      "version": "3.2.146",
+      "description": "PDF als achtergrond inlezen (ongewijzigd ingebouwd: pdf.min.js, pdf.worker.min.js)",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/pdfjs-dist@3.2.146",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "7662af706ecbf4ae9ba0f4f4ea50636617646c31d6c67aeca2338b1805a11c07"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/mozilla/pdf.js"
+        }
+      ],
+      "components": [
+        {
+          "type": "file",
+          "name": "pdf.worker.min.js",
+          "hashes": [
+            {
+              "alg": "SHA-256",
+              "content": "4efa4f25d5f14e309922fb568e3b653ebc53cdb0d60b85bdefd22b30cb0a7a22"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/xlsx@0.18.5",
+      "name": "SheetJS Community Edition (xlsx)",
+      "version": "0.18.5",
+      "description": "Excel-bestand maken; alleen schrijven, nooit inlezen (ongewijzigd ingebouwd: xlsx.full.min.js)",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "purl": "pkg:npm/xlsx@0.18.5",
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c9506197caf809a075b6dee1da0d36fb19da7158ffe8a88e7b0c96c5d8623c99"
+        }
+      ],
+      "externalReferences": [
+        {
+          "type": "vcs",
+          "url": "https://github.com/SheetJS/sheetjs"
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "voltschematix-web",
+      "dependsOn": [
+        "pkg:npm/jspdf@4.2.1",
+        "pkg:npm/pdfjs-dist@3.2.146",
+        "pkg:npm/xlsx@0.18.5"
+      ]
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "CVE-2024-4367",
+      "source": {
+        "name": "NVD",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4367"
+      },
+      "affects": [
+        {
+          "ref": "pkg:npm/pdfjs-dist@3.2.146"
+        }
+      ],
+      "analysis": {
+        "state": "not_affected",
+        "justification": "protected_by_mitigating_control",
+        "detail": "PDF.js wordt gebruikt met isEvalSupported:false (de aanbevolen maatregel). Daarnaast laat de Content-Security-Policy van de pagina enkel scripts met een vaste sha256-hash toe en geen eval (geen unsafe-eval), en geen workers of netwerkverbindingen."
+      }
+    },
+    {
+      "id": "CVE-2023-30533",
+      "source": {
+        "name": "NVD",
+        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-30533"
+      },
+      "affects": [
+        {
+          "ref": "pkg:npm/xlsx@0.18.5"
+        }
+      ],
+      "analysis": {
+        "state": "not_affected",
+        "justification": "code_not_reachable",
+        "detail": "De kwetsbaarheid zit in het inlezen van werkbladbestanden. VoltSchematix gebruikt SheetJS uitsluitend om een Excel-bestand te schrijven (json_to_sheet, book_new, writeFile) en leest nooit werkbladen in."
+      }
+    }
+  ]
+}

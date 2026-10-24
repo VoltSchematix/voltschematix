@@ -39,6 +39,7 @@ Een volledige handleiding, met woordenlijst en sneltoetsen, staat in het program
 - Alles wat je invult, blijft **op je eigen computer**, in je browser. Er wordt niets doorgestuurd.
 - Het programma maakt **geen enkele internetverbinding**. Alle onderdelen zitten in het bestand zelf.
 - Een strikte beveiligingsregel laat alleen de eigen code van het programma draaien. Projectbestanden worden bij het openen gecontroleerd en opgeschoond.
+- Welke onderdelen van derden erin zitten (met versie en controlecode), staat in [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt) en in de SBOM [sbom-web.cdx.json](sbom-web.cdx.json) (CycloneDX). Bij het Windows-programma staat ook een SBOM bij elke release.
 - Haal het programma **alleen via de officiële link** hierboven. Een projectbestand (`.json`) kun je gerust openen; een HTML-bestand van iemand anders open je beter niet.
 - Je project bewaar je als **bestand op je computer** (.json), in een map naar keuze: *Opslaan* (Ctrl+S) of *Opslaan als*. In Chrome en Edge verschijnt het gewone Windows-venster en bewaart *Opslaan* daarna telkens in hetzelfde bestand; in andere browsers komt het bestand in *Downloads*.
 - Op het tabblad **Mijn projecten** vind je al je projectbestanden terug, met naam, klant en adres. Kies er een **projectmap** en alle projecten in die map verschijnen vanzelf.
@@ -72,6 +73,7 @@ VoltSchematix est un programme gratuit pour réaliser les plans d'une installati
 - Fonctionne au mieux dans Chrome ou Edge sur ordinateur. Fonctionne aussi sur smartphone et tablette (iPhone, iPad, Android), au toucher ; l'enregistrement s'y fait par téléchargement (iPhone/iPad : *Enregistrer dans Fichiers*).
 - Vos données restent sur votre ordinateur ; le programme ne fait aucune connexion internet. Enregistrez votre projet comme fichier (.json) dans le dossier de votre choix (Chrome/Edge) ou dans Téléchargements. Téléchargez le programme uniquement via le lien officiel.
 - L'onglet **Mes projets** affiche tous vos fichiers de projet (nom, client, adresse). Le programme fait aussi des copies de sauvegarde automatiques dans le navigateur, comme filet de sécurité temporaire.
+- Composants tiers et versions : THIRD-PARTY-LICENSES.txt et la SBOM [sbom-web.cdx.json](sbom-web.cdx.json) (CycloneDX).
 - Les fichiers de projet (`.json`) de toutes les versions précédentes s'ouvrent dans la dernière version.
 - Le manuel complet se trouve dans le programme (onglet **Manuel** ou bouton **?**).
 
@@ -87,6 +89,7 @@ VoltSchematix is a free program to draw the plans of an electrical installation:
 - Works best in Chrome or Edge on a computer. Also works on phones and tablets (iPhone, iPad, Android) with touch; saving there is a download (iPhone/iPad: *Save to Files*).
 - Your data stays on your computer; the program makes no internet connection at all. Save your project as a file (.json) in a folder of your choice (Chrome/Edge) or in Downloads. Only download the program from the official link.
 - The **My projects** tab shows all your project files (name, client, address). The program also makes automatic backups in the browser, as a temporary safety net.
+- Third-party components and versions: THIRD-PARTY-LICENSES.txt and the SBOM [sbom-web.cdx.json](sbom-web.cdx.json) (CycloneDX).
 - Project files (`.json`) from every previous version open in the latest version.
 - The full manual is inside the program (**Manual** tab or the **?** button).
 

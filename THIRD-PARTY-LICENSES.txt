@@ -2,9 +2,9 @@ VoltSchematix bevat de volgende onderdelen van derden, ongewijzigd ingebouwd in 
 VoltSchematix contient les composants tiers suivants, intégrés sans modification dans index.html.
 VoltSchematix includes the following third-party components, embedded unmodified in index.html.
 
-1. jsPDF 2.5.1 (PDF maken / création PDF / PDF creation)
+1. jsPDF 4.2.1 (PDF maken / création PDF / PDF creation)
    https://github.com/parallax/jsPDF - MIT License
-   sha256 98ccf17aa10c20bb1301762618fcc9b6ab3a4e7f26b6071d64d0b41154df3875  jspdf.umd.min.js
+   sha256 e6551fcdc32f09d6853b2c5126d18d01d9447e0da618a41a11ebeee0f6c20d54  jspdf.umd.min.js
 
 2. PDF.js 3.2.146 (PDF als achtergrond / PDF comme fond / PDF as background)
    https://github.com/mozilla/pdf.js - Apache License 2.0 - Copyright Mozilla Foundation
@@ -19,8 +19,8 @@ VoltSchematix includes the following third-party components, embedded unmodified
 jsPDF - MIT License
 ================================================================================
 Copyright
-(c) 2010-2021 James Hall, https://github.com/MrRio/jsPDF
-(c) 2015-2021 yWorks GmbH, https://www.yworks.com/
+(c) 2010-2025 James Hall, https://github.com/MrRio/jsPDF
+(c) 2015-2025 yWorks GmbH, https://www.yworks.com/
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
