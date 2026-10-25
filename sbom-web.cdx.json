@@ -1,15 +1,15 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:ee62b1f7-b69e-4dbb-b544-8a97142b1865",
+  "serialNumber": "urn:uuid:e8151fbe-49c6-48ad-a508-5dd6b43c45f0",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-25T06:36:05Z",
+    "timestamp": "2026-10-25T09:50:25Z",
     "component": {
       "type": "application",
       "bom-ref": "voltschematix-web",
       "name": "VoltSchematix (webversie, index.html)",
-      "version": "1.0.3",
+      "version": "1.0.4",
       "licenses": [
         {
           "license": {
