@@ -1,7 +1,7 @@
 {
   "name": "voltschematix-desktop",
   "private": true,
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "VoltSchematix - programma voor Windows",
   "scripts": {
     "tauri": "tauri"
