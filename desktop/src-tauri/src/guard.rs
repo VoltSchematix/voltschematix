@@ -123,11 +123,22 @@ impl Allow {
         if self.files.lock().map(|f| f.contains(&k)).unwrap_or(false) {
             return true;
         }
+        // in een projectmap nooit via een snelkoppeling (symlink) naar een bestand elders
+        if is_link(p) {
+            return false;
+        }
         match p.parent() {
             Some(parent) => ext_ok(p, &PROJECT_EXT) && self.dir_ok(parent),
             None => false,
         }
     }
+}
+
+/// Is dit pad een snelkoppeling (symbolische link of junction)?
+pub fn is_link(p: &Path) -> bool {
+    fs::symlink_metadata(p)
+        .map(|m| m.file_type().is_symlink())
+        .unwrap_or(false)
 }
 
 pub fn percent_decode(s: &str) -> String {
@@ -161,6 +172,10 @@ pub fn percent_decode(s: &str) -> String {
 pub fn write_atomic(p: &Path, data: &[u8]) -> Result<(), String> {
     let ext = p.extension().and_then(|e| e.to_str()).unwrap_or("bestand");
     let tmp = p.with_extension(format!("{ext}.tmp"));
+    // een achtergebleven tijdelijk bestand (of een snelkoppeling met die naam) eerst weg, zodat er nooit via een link elders geschreven wordt
+    if tmp.exists() || is_link(&tmp) {
+        let _ = fs::remove_file(&tmp);
+    }
     fs::write(&tmp, data).map_err(|e| e.to_string())?;
     if let Err(e) = fs::rename(&tmp, p) {
         let _ = fs::remove_file(&tmp);
@@ -221,6 +236,27 @@ mod tests {
         // onthouden na herstarten
         let b = Allow::load(Some(store));
         assert!(b.file_ok(&f) && b.file_ok(&g) && b.dir_ok(&d));
+        let _ = fs::remove_dir_all(&d);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn no_links() {
+        let d = tmpdir("links");
+        let a = Allow::load(None);
+        a.add_dir(&d);
+        let target = std::env::temp_dir().join(format!("vs-geheim-{}.json", std::process::id()));
+        fs::write(&target, b"geheim").unwrap();
+        let link = d.join("link.json");
+        std::os::unix::fs::symlink(&target, &link).unwrap();
+        assert!(!a.file_ok(&link));
+        // tijdelijk bestand als link: schrijven gaat niet naar het doel van de link
+        let f = d.join("p.json");
+        std::os::unix::fs::symlink(&target, d.join("p.json.tmp")).unwrap();
+        write_atomic(&f, b"nieuw").unwrap();
+        assert_eq!(fs::read(&target).unwrap(), b"geheim");
+        assert_eq!(fs::read(&f).unwrap(), b"nieuw");
+        let _ = fs::remove_file(&target);
         let _ = fs::remove_dir_all(&d);
     }
 
