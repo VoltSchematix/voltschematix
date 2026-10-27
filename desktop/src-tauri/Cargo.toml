@@ -1,6 +1,6 @@
 [package]
 name = "voltschematix"
-version = "1.0.5"
+version = "1.0.6"
 description = "VoltSchematix - plannen van een elektrische installatie tekenen"
 authors = ["VoltSchematix"]
 license = "MIT"
