@@ -1,0 +1,192 @@
+# Bouwt het programma voor Mac (VoltSchematix_…_universal.dmg) en zet het bij Releases,
+# naast het programma voor Windows (zelfde versie, zelfde release).
+# Starten: tabblad Actions → "Programma voor Mac" → Run workflow.
+#
+# Volgorde:
+#   1. test    – Rust-tests (toegangsregels, paden, veilig wegschrijven) en het echte programma bouwen
+#                en starten op een Mac: werkt het voor Apple-chip én Intel, is het ondertekend (ad hoc),
+#                opent een .vsx-bestand met een dubbelklik, start het zonder fouten.
+#   2. release – enkel als alle tests geslaagd zijn: het programma bouwen, bij Releases zetten,
+#                met SHA256SUMS-mac.txt en een SBOM (CycloneDX).
+#
+# Het programma is niet ondertekend met een betaald Apple-ontwikkelaarsaccount. De eerste keer openen
+# vraagt macOS daarom één keer om toestemming (zie de uitleg bij de release en in de README).
+#
+# Alle externe acties staan vast op een exacte versie (commit-SHA), zodat niemand ze
+# achteraf ongemerkt kan wijzigen.
+name: Programma voor Mac
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Testen op Mac
+    runs-on: macos-14
+    timeout-minutes: 90
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Node installeren
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: lts/*
+
+      - name: Rust installeren (Apple-chip en Intel)
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Rust-cache
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: desktop/src-tauri
+
+      - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
+        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+
+      - name: Bouwhulpmiddelen installeren
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Programma bouwen (Apple-chip en Intel samen)
+        working-directory: desktop
+        run: npm run tauri build -- --target universal-apple-darwin --bundles app
+
+      - name: Programma controleren en starten
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+          APP=$(ls -d desktop/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app | head -n 1)
+          echo "Programma: $APP"
+          BIN="$APP/Contents/MacOS/$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Contents/Info.plist")"
+          echo "--- werkt op Apple-chip en Intel"
+          ARCHS=$(lipo -archs "$BIN"); echo "$ARCHS"
+          echo "$ARCHS" | grep -q arm64 && echo "$ARCHS" | grep -q x86_64
+          echo "--- ondertekend (ad hoc), niets gewijzigd"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          echo "--- .vsx opent met VoltSchematix"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleDocumentTypes' "$APP/Contents/Info.plist" | tee /tmp/doctypes.txt
+          grep -q vsx /tmp/doctypes.txt
+          echo "--- versie"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist"
+          echo "--- starten (zoals met een klik in de map Programma's) en 20 seconden laten lopen"
+          open --stdout "$RUNNER_TEMP/programma.log" --stderr "$RUNNER_TEMP/programma.log" "$APP"
+          sleep 20
+          PID=$(pgrep -f "$BIN" | head -n 1 || true)
+          if [ -z "$PID" ]; then echo "Het programma is gestopt:"; cat "$RUNNER_TEMP/programma.log" || true; exit 1; fi
+          echo "draait (proces $PID)"
+          echo "--- een project openen zoals bij een dubbelklik"
+          cp desktop/tests/v06.json "$RUNNER_TEMP/Test project.vsx"
+          open -a "$APP" "$RUNNER_TEMP/Test project.vsx"
+          sleep 8
+          if ! kill -0 "$PID" 2>/dev/null; then echo "Het programma is gestopt na het openen:"; cat "$RUNNER_TEMP/programma.log" || true; exit 1; fi
+          N=$(pgrep -f "$BIN" | wc -l | tr -d ' ')
+          echo "aantal vensters/processen: $N"
+          [ "$N" = "1" ]
+          kill "$PID" || true
+          echo "OK: het programma start, opent een project en blijft draaien"
+
+      - name: Uitvoer van het programma (enkel bij een fout)
+        if: failure()
+        run: cat "$RUNNER_TEMP/programma.log" 2>/dev/null | tail -n 80 || echo 'geen uitvoer'
+
+  release:
+    name: Programma bouwen en bij Releases zetten
+    needs: test
+    runs-on: macos-14
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Node installeren
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: lts/*
+
+      - name: Rust installeren (Apple-chip en Intel)
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Bouwhulpmiddelen installeren
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Programma bouwen en bij Releases zetten
+        id: tauri
+        uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: desktop
+          tauriScript: npm run tauri
+          args: --target universal-apple-darwin
+          tagName: v__VERSION__
+          releaseName: VoltSchematix __VERSION__
+          releaseBody: |
+            **Windows:** download **VoltSchematix_…_x64-setup.exe** hieronder bij *Assets* en open het om te installeren.
+            Windows kan waarschuwen dat de uitgever onbekend is: klik dan op *Meer informatie* → *Toch uitvoeren*.
+
+            **Mac:** download **VoltSchematix_…_universal.dmg**, open het en sleep VoltSchematix naar de map *Programma's*.
+            De eerste keer vraagt macOS om toestemming: open het programma, klik op *Gereed*, ga naar *Systeeminstellingen* → *Privacy en beveiliging* en klik onderaan bij VoltSchematix op *Toch openen*. Daarna opent het gewoon.
+
+            Projecten (.vsx en .json) zijn uitwisselbaar tussen Windows, Mac en de online versie: https://voltschematix.github.io/voltschematix/
+
+            **Onderdelen (SBOM):** `sbom-windows.cdx.json`, `sbom-mac.cdx.json` (programma's) en `sbom-web.cdx.json` (ingebouwde bibliotheken), in CycloneDX-formaat.
+
+            **Controle (optioneel):** bij *Assets* staan `SHA256SUMS.txt` (Windows) en `SHA256SUMS-mac.txt` (Mac).
+          releaseDraft: true
+          prerelease: false
+
+      - name: SBOM maken (lijst van alle onderdelen, CycloneDX)
+        run: |
+          set -euo pipefail
+          cargo install cargo-cyclonedx --version 0.5.9 --locked
+          cargo cyclonedx --manifest-path desktop/src-tauri/Cargo.toml -f json --spec-version 1.5 --override-filename sbom-mac
+          F=$(ls desktop/src-tauri/sbom-mac*.json | head -n 1)
+          cp "$F" "$RUNNER_TEMP/sbom-mac.cdx.json"
+
+      - name: Controlecodes (SHA-256) maken en bij de release zetten
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ steps.tauri.outputs.releaseId }}
+        run: |
+          set -euo pipefail
+          cd desktop/src-tauri/target/universal-apple-darwin/release/bundle
+          FILES=$(find . -type f \( -name '*.dmg' -o -name '*.app.tar.gz' \))
+          if [ -z "$FILES" ]; then echo 'Geen installatiebestand gevonden'; exit 1; fi
+          for f in $FILES; do shasum -a 256 "$f" | sed "s#  .*/#  #"; done > "$RUNNER_TEMP/SHA256SUMS-mac.txt"
+          cat "$RUNNER_TEMP/SHA256SUMS-mac.txt"
+          { echo '### SHA-256 (Mac)'; echo '```'; cat "$RUNNER_TEMP/SHA256SUMS-mac.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+          for a in "SHA256SUMS-mac.txt:text/plain" "sbom-mac.cdx.json:application/json"; do
+            name=${a%%:*}; type=${a#*:}
+            curl -sS --fail -X POST -H "Authorization: Bearer $GH_TOKEN" -H "Accept: application/vnd.github+json" -H "Content-Type: $type" \
+              --data-binary @"$RUNNER_TEMP/$name" "https://uploads.github.com/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID/assets?name=$name" > /dev/null
+          done
+
+      - name: Uitleg bij de release aanvullen met Mac (als de release al bestond)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_ID: ${{ steps.tauri.outputs.releaseId }}
+        run: |
+          set -euo pipefail
+          BODY=$(gh api "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" --jq .body)
+          if ! printf '%s' "$BODY" | grep -q '\*\*Mac:\*\*'; then
+            ADD=$'\n\n**Mac:** download **VoltSchematix_…_universal.dmg**, open het en sleep VoltSchematix naar de map *Programma\'s*.\nDe eerste keer vraagt macOS om toestemming: open het programma, klik op *Gereed*, ga naar *Systeeminstellingen* → *Privacy en beveiliging* en klik onderaan bij VoltSchematix op *Toch openen*. Daarna opent het gewoon.\n\nProjecten (.vsx en .json) zijn uitwisselbaar tussen Windows, Mac en de online versie.\n\n**Mac – SBOM en controle:** `sbom-mac.cdx.json` en `SHA256SUMS-mac.txt`.'
+            gh api -X PATCH "repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" -f body="$BODY$ADD" > /dev/null
+            echo "Uitleg aangevuld"
+          else
+            echo "Uitleg bevat Mac al"
+          fi

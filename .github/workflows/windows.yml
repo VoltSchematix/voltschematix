@@ -135,16 +135,19 @@ jobs:
           projectPath: desktop
           tauriScript: npm run tauri
           tagName: v__VERSION__
-          releaseName: VoltSchematix __VERSION__ voor Windows
+          releaseName: VoltSchematix __VERSION__
           releaseBody: |
-            Download **VoltSchematix_…_x64-setup.exe** hieronder bij *Assets* en open het om te installeren.
+            **Windows:** download **VoltSchematix_…_x64-setup.exe** hieronder bij *Assets* en open het om te installeren.
             Windows kan waarschuwen dat de uitgever onbekend is: klik dan op *Meer informatie* → *Toch uitvoeren*.
-            Projecten (.vsx en .json) zijn uitwisselbaar met de online versie: https://voltschematix.github.io/voltschematix/
 
-            **Onderdelen (SBOM):** `sbom-windows.cdx.json` (programma) en `sbom-web.cdx.json` (ingebouwde bibliotheken), in CycloneDX-formaat.
+            **Mac:** download **VoltSchematix_…_universal.dmg**, open het en sleep VoltSchematix naar de map *Programma's*.
+            De eerste keer vraagt macOS om toestemming: open het programma, klik op *Gereed*, ga naar *Systeeminstellingen* → *Privacy en beveiliging* en klik onderaan bij VoltSchematix op *Toch openen*. Daarna opent het gewoon.
 
-            **Controle (optioneel):** bij *Assets* staat `SHA256SUMS.txt`. In PowerShell:
-            `Get-FileHash .\VoltSchematix_…_x64-setup.exe` – de code moet gelijk zijn aan die in het bestand.
+            Projecten (.vsx en .json) zijn uitwisselbaar tussen Windows, Mac en de online versie: https://voltschematix.github.io/voltschematix/
+
+            **Onderdelen (SBOM):** `sbom-windows.cdx.json`, `sbom-mac.cdx.json` (programma's) en `sbom-web.cdx.json` (ingebouwde bibliotheken), in CycloneDX-formaat.
+
+            **Controle (optioneel):** bij *Assets* staan `SHA256SUMS.txt` (Windows) en `SHA256SUMS-mac.txt` (Mac).
           releaseDraft: true
           prerelease: false
 
