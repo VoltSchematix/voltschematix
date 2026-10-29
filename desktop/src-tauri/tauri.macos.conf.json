@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "targets": [
+      "app",
+      "dmg"
+    ],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns"
+    ],
+    "fileAssociations": [
+      {
+        "ext": [
+          "vsx"
+        ],
+        "name": "VoltSchematix-project",
+        "description": "VoltSchematix-project",
+        "role": "Editor",
+        "mimeType": "application/x-voltschematix",
+        "exportedType": {
+          "identifier": "io.github.voltschematix.project",
+          "conformsTo": [
+            "public.json",
+            "public.data"
+          ]
+        }
+      }
+    ],
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": "-",
+      "dmg": {
+        "windowSize": {
+          "width": 600,
+          "height": 380
+        },
+        "appPosition": {
+          "x": 160,
+          "y": 180
+        },
+        "applicationFolderPosition": {
+          "x": 440,
+          "y": 180
+        }
+      }
+    }
+  }
+}
