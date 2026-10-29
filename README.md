@@ -2,7 +2,7 @@
 
 **NL** · [FR](#français) · [EN](#english)
 
-**Versie 1.0.6** · Version 1.0.6
+**Versie 1.0.7** · Version 1.0.7
 
 VoltSchematix is een gratis programma om de plannen van een elektrische installatie te maken: het **eendraadschema**, het **situatieplan**, de **lijst met kringen** en de **materiaallijst**. Alles samen maak je in één PDF, klaar om af te drukken of te bezorgen.
 
@@ -22,6 +22,17 @@ Op **gsm en tablet** (iPhone, iPad, Android) werkt het ook, met aanraken: tikken
 
 Liever een echt programma? **[Downloaden voor Windows](https://github.com/VoltSchematix/voltschematix/releases/latest)** → klik bij *Assets* op *VoltSchematix_…_x64-setup.exe*, open het en installeer. Je krijgt een icoon in het startmenu, een eigen venster, en projecten (`.vsx`) openen met een dubbelklik. Windows kan bij de installatie waarschuwen dat de uitgever onbekend is: klik op *Meer informatie* → *Toch uitvoeren*. Projecten zijn uitwisselbaar met de online versie.
 
+## Programma voor Mac
+
+**[Downloaden voor Mac](https://github.com/VoltSchematix/voltschematix/releases/latest)** → klik bij *Assets* op *VoltSchematix_…_universal.dmg* (voor elke Mac, met Apple-chip of Intel, vanaf macOS 11). Open het en sleep VoltSchematix naar de map *Programma's*. Je krijgt een eigen venster en een icoon in het Dock, en projecten (`.vsx`) openen met een dubbelklik.
+
+De eerste keer vraagt macOS om toestemming, omdat het programma niet via de App Store komt:
+1. Open VoltSchematix. macOS meldt dat het de ontwikkelaar niet kan controleren: klik op *Gereed*.
+2. Ga naar *Systeeminstellingen* → *Privacy en beveiliging*. Onderaan staat een melding over VoltSchematix: klik op *Toch openen* en bevestig.
+3. Daarna opent het programma gewoon, ook de volgende keren.
+
+Projecten zijn uitwisselbaar tussen de Mac, Windows en de online versie, in alle richtingen.
+
 ## Hoe begin je?
 
 1. **Document:** vul de gegevens van de klant en van je firma in.
@@ -39,7 +50,7 @@ Een volledige handleiding, met woordenlijst en sneltoetsen, staat in het program
 - Alles wat je invult, blijft **op je eigen computer**, in je browser. Er wordt niets doorgestuurd.
 - Het programma maakt **geen enkele internetverbinding**. Alle onderdelen zitten in het bestand zelf.
 - Een strikte beveiligingsregel laat alleen de eigen code van het programma draaien. Projectbestanden worden bij het openen gecontroleerd en opgeschoond.
-- Welke onderdelen van derden erin zitten (met versie en controlecode), staat in [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt) en in de SBOM [sbom-web.cdx.json](sbom-web.cdx.json) (CycloneDX). Bij het Windows-programma staat ook een SBOM bij elke release.
+- Welke onderdelen van derden erin zitten (met versie en controlecode), staat in [THIRD-PARTY-LICENSES.txt](THIRD-PARTY-LICENSES.txt) en in de SBOM [sbom-web.cdx.json](sbom-web.cdx.json) (CycloneDX). Bij de programma's voor Windows en Mac staat ook een SBOM bij elke release.
 - Haal het programma **alleen via de officiële link** hierboven. Een projectbestand (`.json`) kun je gerust openen; een HTML-bestand van iemand anders open je beter niet.
 - Je project bewaar je als **bestand op je computer** (.json), in een map naar keuze: *Opslaan* (Ctrl+S) of *Opslaan als*. In Chrome en Edge verschijnt het gewone Windows-venster en bewaart *Opslaan* daarna telkens in hetzelfde bestand; in andere browsers komt het bestand in *Downloads*.
 - Op het tabblad **Mijn projecten** vind je al je projectbestanden terug, met naam, klant en adres. Kies er een **projectmap** en alle projecten in die map verschijnen vanzelf.
@@ -69,7 +80,7 @@ VoltSchematix est un programme gratuit pour réaliser les plans d'une installati
 
 - **En ligne :** https://voltschematix.github.io/voltschematix/
 - **Hors ligne :** ouvrez le lien, puis le menu du navigateur (⋮ ou …) → **Enregistrer la page sous** → **« Page Web, HTML uniquement »**. Ou ouvrez `index.html` ci-dessus et cliquez sur la flèche de téléchargement. Tout fonctionne ensuite sans internet, y compris le PDF, Excel et un PDF comme fond.
-- Existe aussi comme programme pour Windows : **[Télécharger pour Windows](https://github.com/VoltSchematix/voltschematix/releases/latest)** (fichier *…setup.exe* sous *Assets*) ; les projets (`.vsx`, `.json`) fonctionnent dans les deux.
+- Existe aussi comme programme pour Windows et pour Mac : **[Télécharger](https://github.com/VoltSchematix/voltschematix/releases/latest)** (sous *Assets* : *…setup.exe* pour Windows, *…universal.dmg* pour Mac) ; les projets (`.vsx`, `.json`) fonctionnent partout. Sur Mac, la première fois : ouvrez le programme, cliquez sur *OK*, puis *Réglages Système* → *Confidentialité et sécurité* → *Ouvrir quand même*.
 - Fonctionne au mieux dans Chrome ou Edge sur ordinateur. Fonctionne aussi sur smartphone et tablette (iPhone, iPad, Android), au toucher ; l'enregistrement s'y fait par téléchargement (iPhone/iPad : *Enregistrer dans Fichiers*).
 - Vos données restent sur votre ordinateur ; le programme ne fait aucune connexion internet. Enregistrez votre projet comme fichier (.json) dans le dossier de votre choix (Chrome/Edge) ou dans Téléchargements. Téléchargez le programme uniquement via le lien officiel.
 - L'onglet **Mes projets** affiche tous vos fichiers de projet (nom, client, adresse). Le programme fait aussi des copies de sauvegarde automatiques dans le navigateur, comme filet de sécurité temporaire.
@@ -85,7 +96,7 @@ VoltSchematix is a free program to draw the plans of an electrical installation:
 
 - **Online:** https://voltschematix.github.io/voltschematix/
 - **Offline:** open the link, then the browser menu (⋮ or …) → **Save page as** → **"Webpage, HTML Only"**. Or open `index.html` above and click the download arrow. Everything then works without internet, including PDF, Excel and a PDF as background.
-- Also available as a program for Windows: **[Download for Windows](https://github.com/VoltSchematix/voltschematix/releases/latest)** (the *…setup.exe* file under *Assets*); projects (`.vsx`, `.json`) work in both.
+- Also available as a program for Windows and for Mac: **[Download](https://github.com/VoltSchematix/voltschematix/releases/latest)** (under *Assets*: *…setup.exe* for Windows, *…universal.dmg* for Mac); projects (`.vsx`, `.json`) work everywhere. On a Mac, the first time: open the program, click *Done*, then *System Settings* → *Privacy & Security* → *Open Anyway*.
 - Works best in Chrome or Edge on a computer. Also works on phones and tablets (iPhone, iPad, Android) with touch; saving there is a download (iPhone/iPad: *Save to Files*).
 - Your data stays on your computer; the program makes no internet connection at all. Save your project as a file (.json) in a folder of your choice (Chrome/Edge) or in Downloads. Only download the program from the official link.
 - The **My projects** tab shows all your project files (name, client, address). The program also makes automatic backups in the browser, as a temporary safety net.
