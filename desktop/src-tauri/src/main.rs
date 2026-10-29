@@ -1,6 +1,6 @@
-// VoltSchematix - programma voor Windows.
+// VoltSchematix - programma voor Windows en Mac.
 // Het venster toont exact dezelfde code als de webversie (dist/index.html).
-// Dit bestand voegt enkel toe wat een browser niet kan: de gewone Windows-vensters om een
+// Dit bestand voegt enkel toe wat een browser niet kan: de gewone vensters van Windows of macOS om een
 // bestand te kiezen, en het lezen en schrijven van precies die bestanden (zie guard.rs).
 
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
@@ -14,6 +14,8 @@ use std::path::{Path, PathBuf};
 use std::sync::Mutex;
 use std::time::UNIX_EPOCH;
 use tauri::Manager;
+#[cfg(target_os = "macos")]
+use tauri::Emitter;
 #[cfg(not(feature = "e2e"))]
 use tauri_plugin_dialog::DialogExt;
 
@@ -103,7 +105,7 @@ fn vs_write_bytes(request: tauri::ipc::Request, allow: tauri::State<'_, Allow>) 
     write_atomic(&p, data)
 }
 
-/// Welke bestandstypes een Windows-venster toont.
+/// Welke bestandstypes het venster Openen/Opslaan toont.
 fn filter_for(kind: &str) -> (&'static str, &'static [&'static str]) {
     match kind {
         "pdf" => ("PDF", &["pdf"]),
@@ -112,7 +114,7 @@ fn filter_for(kind: &str) -> (&'static str, &'static [&'static str]) {
     }
 }
 
-/// Testversie (enkel voor de automatische eindtest bij het bouwen): de Windows-vensters worden
+/// Testversie (enkel voor de automatische eindtest bij het bouwen): de vensters om een bestand te kiezen worden
 /// overgeslagen en de paden komen uit een lijst. Zit niet in het programma dat gebruikers krijgen.
 #[cfg(feature = "e2e")]
 fn e2e_next() -> Option<PathBuf> {
@@ -136,7 +138,7 @@ fn parent_of(app: &tauri::AppHandle) -> Option<tauri::WebviewWindow> {
     app.get_webview_window("main")
 }
 
-/// Windows-venster "Opslaan als". Het gekozen bestand mag daarna geschreven worden.
+/// Venster "Opslaan als". Het gekozen bestand mag daarna geschreven worden.
 #[tauri::command]
 async fn vs_pick_save(
     app: tauri::AppHandle,
@@ -173,7 +175,7 @@ async fn vs_pick_save(
     Ok(Some(p.to_string_lossy().into_owned()))
 }
 
-/// Windows-venster "Openen". Het gekozen bestand mag daarna gelezen en bewaard worden.
+/// Venster "Openen". Het gekozen bestand mag daarna gelezen en bewaard worden.
 #[tauri::command]
 async fn vs_pick_open(
     app: tauri::AppHandle,
@@ -207,7 +209,7 @@ async fn vs_pick_open(
     Ok(Some(p.to_string_lossy().into_owned()))
 }
 
-/// Windows-venster "Map kiezen" voor de projectmap.
+/// Venster "Map kiezen" voor de projectmap.
 #[tauri::command]
 async fn vs_pick_dir(app: tauri::AppHandle, allow: tauri::State<'_, Allow>) -> Result<Option<String>, String> {
     #[cfg(feature = "e2e")]
@@ -234,6 +236,36 @@ fn launch_file(launch: tauri::State<'_, Launch>) -> Option<String> {
     l.0.lock().ok().and_then(|mut v| v.take())
 }
 
+/// Mac: een project dat geopend wordt met een dubbelklik (of door het op het programma te slepen)
+/// komt niet via de opstartregel binnen, maar als bericht van macOS. Het bestand wordt toegelaten,
+/// klaargezet zoals bij het opstarten, en het venster krijgt een seintje om het te openen.
+#[cfg(target_os = "macos")]
+fn opened(app: &tauri::AppHandle, urls: &[tauri::Url]) {
+    let Some(p) = urls
+        .iter()
+        .filter_map(|u| u.to_file_path().ok())
+        .find(|p| ext_ok(p, &PROJECT_EXT) && p.is_file())
+    else {
+        return;
+    };
+    // komt het bericht nog vóór het programma helemaal klaar is, dan wacht het tot het opstarten
+    let (Some(allow), Some(launch)) = (app.try_state::<Allow>(), app.try_state::<Launch>()) else {
+        if let Ok(mut q) = PENDING.lock() {
+            q.push(p);
+        }
+        return;
+    };
+    allow.add_file(&p);
+    if let Ok(mut v) = launch.0.lock() {
+        *v = Some(p.to_string_lossy().into_owned());
+    }
+    let _ = app.emit("vs-open", ());
+}
+
+/// Mac: bestanden die macOS doorgaf nog vóór het opstarten klaar was.
+#[cfg(target_os = "macos")]
+static PENDING: Mutex<Vec<PathBuf>> = Mutex::new(Vec::new());
+
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
@@ -250,10 +282,17 @@ fn main() {
         .setup(|app| {
             let store = app.path().app_data_dir().ok().map(|d| d.join("toegang.json"));
             let allow = Allow::load(store);
-            let launched = std::env::args_os()
+            #[allow(unused_mut)]
+            let mut launched = std::env::args_os()
                 .skip(1)
                 .map(PathBuf::from)
                 .find(|p| ext_ok(p, &PROJECT_EXT) && p.is_file());
+            #[cfg(target_os = "macos")]
+            if let Ok(mut q) = PENDING.lock() {
+                if let Some(p) = q.drain(..).last() {
+                    launched = Some(p);
+                }
+            }
             if let Some(p) = &launched {
                 allow.add_file(Path::new(p));
             }
@@ -273,6 +312,20 @@ fn main() {
             vs_pick_dir,
             launch_file
         ])
-        .run(tauri::generate_context!())
-        .expect("VoltSchematix kon niet starten");
+        .build(tauri::generate_context!())
+        .expect("VoltSchematix kon niet starten")
+        .run(|_app, _event| {
+            #[cfg(target_os = "macos")]
+            match &_event {
+                tauri::RunEvent::Opened { urls } => opened(_app, urls),
+                // Cmd+Q: eerst het venster laten sluiten, zodat de vraag over niet-opgeslagen werk verschijnt
+                tauri::RunEvent::ExitRequested { code: None, api, .. } => {
+                    if let Some(w) = _app.get_webview_window("main") {
+                        api.prevent_exit();
+                        let _ = w.close();
+                    }
+                }
+                _ => {}
+            }
+        });
 }

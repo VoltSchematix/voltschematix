@@ -1,7 +1,7 @@
 //! Wat het programma mag lezen en schrijven.
 //!
 //! Het venster kan enkel bestanden lezen of schrijven die de gebruiker zelf gekozen heeft
-//! in een Windows-venster (Opslaan, Openen, Projectmap kiezen) of waarmee het programma
+//! in een venster van Windows of macOS (Opslaan, Openen, Projectmap kiezen) of waarmee het programma
 //! gestart werd (dubbelklik). Die lijst wordt onthouden, zodat Mijn projecten na het herstarten
 //! blijft werken. Al de rest van de computer blijft onbereikbaar, ook als er ooit kwaadaardige
 //! code in het venster zou geraken.
@@ -28,8 +28,9 @@ pub fn ext_ok(p: &Path, allowed: &[&str]) -> bool {
         .unwrap_or(false)
 }
 
-/// Vaste schrijfwijze van een pad (Windows maakt geen onderscheid tussen hoofd- en kleine letters).
-/// Enkel volledige paden zonder ".." worden aanvaard.
+/// Vaste schrijfwijze van een pad. Enkel volledige paden zonder ".." worden aanvaard.
+/// Windows maakt geen onderscheid tussen hoofd- en kleine letters; op een Mac blijft het pad
+/// letterlijk (een Mac-schijf kan hoofdlettergevoelig zijn: "Plan.vsx" en "plan.vsx" zijn dan twee bestanden).
 pub fn key(p: &Path) -> Option<String> {
     if !p.is_absolute() {
         return None;
@@ -37,12 +38,24 @@ pub fn key(p: &Path) -> Option<String> {
     if p.components().any(|c| matches!(c, Component::ParentDir | Component::CurDir)) {
         return None;
     }
-    let s = p.to_string_lossy().replace('/', "\\");
-    let s = s.trim_end_matches('\\');
-    if s.is_empty() {
-        return None;
+    #[cfg(windows)]
+    {
+        let s = p.to_string_lossy().replace('/', "\\");
+        let s = s.trim_end_matches('\\');
+        if s.is_empty() {
+            return None;
+        }
+        Some(s.to_lowercase())
     }
-    Some(s.to_lowercase())
+    #[cfg(not(windows))]
+    {
+        let s = p.to_string_lossy();
+        let s = s.trim_end_matches('/');
+        if s.is_empty() {
+            return None;
+        }
+        Some(s.to_string())
+    }
 }
 
 #[derive(Default, Serialize, Deserialize)]
@@ -220,8 +233,11 @@ mod tests {
         assert!(!a.file_ok(&f));
         a.add_file(&f);
         assert!(a.file_ok(&f));
-        // hoofdletters maken niet uit
+        // Windows: hoofdletters maken niet uit; Mac: een ander geschreven naam is een ander bestand
+        #[cfg(windows)]
         assert!(a.file_ok(&PathBuf::from(f.to_string_lossy().to_uppercase())));
+        #[cfg(not(windows))]
+        assert!(!a.file_ok(&d.join("WONING.vsx")));
         // een ander bestand in dezelfde map: niet, tot de map gekozen is
         let g = d.join("Ander.json");
         assert!(!a.file_ok(&g));
