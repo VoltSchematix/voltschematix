@@ -25,7 +25,7 @@ permissions:
 jobs:
   test:
     name: Testen op Mac
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 90
     steps:
       - name: Bestanden ophalen
@@ -83,7 +83,16 @@ jobs:
           if [ -z "$PID" ]; then echo "Het programma is gestopt:"; cat "$RUNNER_TEMP/programma.log" || true; exit 1; fi
           echo "draait (proces $PID)"
           echo "--- een project openen zoals bij een dubbelklik"
-          cp desktop/tests/v06.json "$RUNNER_TEMP/Test project.vsx"
+          # Klein testproject, hier aangemaakt zodat de test niet afhangt van een bestand in de repository.
+          cat > "$RUNNER_TEMP/Test project.vsx" <<'EOF'
+          {"app":"AutoElectricity Plan","versie":1,"naam":"Testproject Mac","datum":"2026-10-31T12:00:00.000Z",
+           "doc":{"k_naam":"Test Mac","k_straat":"Kerkstraat","k_nr":"12","k_pc":"9000","k_gem":"Gent","p_net":"Monofasig 2×230 V","p_amp":"40 A","p_aard_sys":"TT"},
+           "sch":{"num":"code","bord":"Kast 1","kabel":"XVB 4G10","icn":false,"groups":[
+             {"diff":{"typ":"A","mA":300,"In":40,"polen":2},"kringen":[
+               {"letter":"","naam":"Stopcontacten","bev":{"polen":2,"curve":"C","In":20,"icn":3000},
+                "kabel":{"type":"","cca":false,"aders":3,"sectie":"2,5"},
+                "punten":[{"items":[{"s":"sc","n":2,"aard":true,"ip":"IP20"}]}]}]}]}}
+          EOF
           open -a "$APP" "$RUNNER_TEMP/Test project.vsx"
           sleep 8
           if ! kill -0 "$PID" 2>/dev/null; then echo "Het programma is gestopt na het openen:"; cat "$RUNNER_TEMP/programma.log" || true; exit 1; fi
@@ -100,7 +109,7 @@ jobs:
   release:
     name: Programma bouwen en bij Releases zetten
     needs: test
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 60
     permissions:
       contents: write
