@@ -63,7 +63,8 @@ jobs:
         timeout-minutes: 10
         run: |
           set -euo pipefail
-          APP=$(ls -d desktop/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app | head -n 1)
+          # volledig pad: "open -a" zoekt bij een relatief pad naar een programma met die naam
+          APP="$PWD/$(ls -d desktop/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app | head -n 1)"
           echo "Programma: $APP"
           BIN="$APP/Contents/MacOS/$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Contents/Info.plist")"
           echo "--- werkt op Apple-chip en Intel"
