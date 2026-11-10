@@ -1,6 +1,6 @@
 # Alleen testen, niets uitbrengen: Windows-programma (echte eindtest), Mac-programma (bouwen + starten)
 # en de website in Chrome, Firefox en Safari (WebKit), met de uitwisseling van projectbestanden tussen alle versies.
-# Loopt vanzelf bij een pull request naar main, of: tabblad Actions → "Testen (zonder uitbrengen)" → Run workflow → kies de tak.
+# Loopt vanzelf bij elke push naar een tak release-… en bij een pull request naar main, of: tabblad Actions → "Testen (zonder uitbrengen)" → Run workflow → kies de tak.
 # Maakt GEEN release en GEEN concept-release. Toegevoegd bij 1.0.8.
 name: Testen (zonder uitbrengen)
 
@@ -8,6 +8,8 @@ on:
   workflow_dispatch:
   pull_request:
     branches: [main]
+  push:
+    branches: ['release-*']
 
 permissions:
   contents: read
