@@ -1,15 +1,15 @@
 {
   "bomFormat": "CycloneDX",
   "specVersion": "1.5",
-  "serialNumber": "urn:uuid:e286169f-a03e-4abe-b8e0-ac65802e895b",
+  "serialNumber": "urn:uuid:9ad6ee13-7a59-442d-8bb9-020820f0fe99",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-10-29T08:03:50Z",
+    "timestamp": "2026-11-09T16:34:45Z",
     "component": {
       "type": "application",
       "bom-ref": "voltschematix-web",
       "name": "VoltSchematix (webversie, index.html)",
-      "version": "1.0.7",
+      "version": "1.0.8",
       "licenses": [
         {
           "license": {
@@ -65,10 +65,10 @@
     },
     {
       "type": "library",
-      "bom-ref": "pkg:npm/pdfjs-dist@3.2.146",
+      "bom-ref": "pkg:npm/pdfjs-dist@6.2.108",
       "name": "PDF.js (pdfjs-dist)",
-      "version": "3.2.146",
-      "description": "PDF als achtergrond inlezen (ongewijzigd ingebouwd: pdf.min.js, pdf.worker.min.js)",
+      "version": "6.2.108",
+      "description": "PDF als achtergrond inlezen (legacy/build/pdf.min.mjs en pdf.worker.min.mjs; enkel de laatste export-regel vervangen door een toewijzing aan globalThis)",
       "licenses": [
         {
           "license": {
@@ -76,11 +76,11 @@
           }
         }
       ],
-      "purl": "pkg:npm/pdfjs-dist@3.2.146",
+      "purl": "pkg:npm/pdfjs-dist@6.2.108",
       "hashes": [
         {
           "alg": "SHA-256",
-          "content": "7662af706ecbf4ae9ba0f4f4ea50636617646c31d6c67aeca2338b1805a11c07"
+          "content": "c4a7829796744ba383faa81db014e5270a25ff5fb378b0f377a8d44ccc0a1a61"
         }
       ],
       "externalReferences": [
@@ -96,36 +96,9 @@
           "hashes": [
             {
               "alg": "SHA-256",
-              "content": "4efa4f25d5f14e309922fb568e3b653ebc53cdb0d60b85bdefd22b30cb0a7a22"
+              "content": "85e8a174c6835723c883dd4b62c731d4cb044a9a4272d796a74b226570d022c2"
             }
           ]
-        }
-      ]
-    },
-    {
-      "type": "library",
-      "bom-ref": "pkg:npm/xlsx@0.18.5",
-      "name": "SheetJS Community Edition (xlsx)",
-      "version": "0.18.5",
-      "description": "Excel-bestand maken; alleen schrijven, nooit inlezen (ongewijzigd ingebouwd: xlsx.full.min.js)",
-      "licenses": [
-        {
-          "license": {
-            "id": "Apache-2.0"
-          }
-        }
-      ],
-      "purl": "pkg:npm/xlsx@0.18.5",
-      "hashes": [
-        {
-          "alg": "SHA-256",
-          "content": "c9506197caf809a075b6dee1da0d36fb19da7158ffe8a88e7b0c96c5d8623c99"
-        }
-      ],
-      "externalReferences": [
-        {
-          "type": "vcs",
-          "url": "https://github.com/SheetJS/sheetjs"
         }
       ]
     }
@@ -135,45 +108,9 @@
       "ref": "voltschematix-web",
       "dependsOn": [
         "pkg:npm/jspdf@4.2.1",
-        "pkg:npm/pdfjs-dist@3.2.146",
-        "pkg:npm/xlsx@0.18.5"
+        "pkg:npm/pdfjs-dist@6.2.108"
       ]
     }
   ],
-  "vulnerabilities": [
-    {
-      "id": "CVE-2024-4367",
-      "source": {
-        "name": "NVD",
-        "url": "https://nvd.nist.gov/vuln/detail/CVE-2024-4367"
-      },
-      "affects": [
-        {
-          "ref": "pkg:npm/pdfjs-dist@3.2.146"
-        }
-      ],
-      "analysis": {
-        "state": "not_affected",
-        "justification": "protected_by_mitigating_control",
-        "detail": "PDF.js wordt gebruikt met isEvalSupported:false (de aanbevolen maatregel). Daarnaast laat de Content-Security-Policy van de pagina enkel scripts met een vaste sha256-hash toe en geen eval (geen unsafe-eval), en geen workers of netwerkverbindingen."
-      }
-    },
-    {
-      "id": "CVE-2023-30533",
-      "source": {
-        "name": "NVD",
-        "url": "https://nvd.nist.gov/vuln/detail/CVE-2023-30533"
-      },
-      "affects": [
-        {
-          "ref": "pkg:npm/xlsx@0.18.5"
-        }
-      ],
-      "analysis": {
-        "state": "not_affected",
-        "justification": "code_not_reachable",
-        "detail": "De kwetsbaarheid zit in het inlezen van werkbladbestanden. VoltSchematix gebruikt SheetJS uitsluitend om een Excel-bestand te schrijven (json_to_sheet, book_new, writeFile) en leest nooit werkbladen in."
-      }
-    }
-  ]
+  "vulnerabilities": []
 }

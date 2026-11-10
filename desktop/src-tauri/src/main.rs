@@ -64,27 +64,6 @@ fn vs_read_text(path: String, allow: tauri::State<'_, Allow>) -> Result<String, 
     fs::read_to_string(&p).map_err(|e| e.to_string())
 }
 
-/// Projectbestanden (.vsx en .json) in een gekozen projectmap, zonder submappen.
-#[tauri::command]
-fn vs_list(dir: String, allow: tauri::State<'_, Allow>) -> Result<Vec<String>, String> {
-    let d = PathBuf::from(&dir);
-    if !allow.dir_ok(&d) {
-        return Err(denied());
-    }
-    let mut out: Vec<String> = Vec::new();
-    for entry in fs::read_dir(&d).map_err(|e| e.to_string())?.flatten() {
-        let p = entry.path();
-        let is_file = entry.file_type().map(|t| t.is_file()).unwrap_or(false);
-        if is_file && ext_ok(&p, &PROJECT_EXT) {
-            if let Some(n) = p.file_name().and_then(|n| n.to_str()) {
-                out.push(n.to_string());
-            }
-        }
-    }
-    out.sort_by_key(|s| s.to_lowercase());
-    Ok(out)
-}
-
 /// Schrijft de inhoud (rechtstreeks als bytes doorgegeven) naar een gekozen bestand.
 #[tauri::command]
 fn vs_write_bytes(request: tauri::ipc::Request, allow: tauri::State<'_, Allow>) -> Result<(), String> {
@@ -109,7 +88,6 @@ fn vs_write_bytes(request: tauri::ipc::Request, allow: tauri::State<'_, Allow>) 
 fn filter_for(kind: &str) -> (&'static str, &'static [&'static str]) {
     match kind {
         "pdf" => ("PDF", &["pdf"]),
-        "xlsx" => ("Excel", &["xlsx"]),
         _ => ("VoltSchematix-project", &["vsx", "json"]),
     }
 }
@@ -209,27 +187,6 @@ async fn vs_pick_open(
     Ok(Some(p.to_string_lossy().into_owned()))
 }
 
-/// Venster "Map kiezen" voor de projectmap.
-#[tauri::command]
-async fn vs_pick_dir(app: tauri::AppHandle, allow: tauri::State<'_, Allow>) -> Result<Option<String>, String> {
-    #[cfg(feature = "e2e")]
-    let picked = {
-        let _ = &app;
-        e2e_next()
-    };
-    #[cfg(not(feature = "e2e"))]
-    let picked = {
-        let mut b = app.dialog().file();
-        if let Some(w) = parent_of(&app) {
-            b = b.set_parent(&w);
-        }
-        b.blocking_pick_folder().and_then(|f| f.into_path().ok())
-    };
-    let Some(p) = picked else { return Ok(None) };
-    allow.add_dir(&p);
-    Ok(Some(p.to_string_lossy().into_owned()))
-}
-
 #[tauri::command]
 fn launch_file(launch: tauri::State<'_, Launch>) -> Option<String> {
     let l: &Launch = &launch;
@@ -305,11 +262,9 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             vs_stat,
             vs_read_text,
-            vs_list,
             vs_write_bytes,
             vs_pick_save,
             vs_pick_open,
-            vs_pick_dir,
             launch_file
         ])
         .build(tauri::generate_context!())

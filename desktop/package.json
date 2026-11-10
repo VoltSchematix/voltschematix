@@ -1,7 +1,7 @@
 {
   "name": "voltschematix-desktop",
   "private": true,
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "VoltSchematix - programma voor Windows en Mac",
   "scripts": {
     "tauri": "tauri"

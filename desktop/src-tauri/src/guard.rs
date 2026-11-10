@@ -2,9 +2,9 @@
 //!
 //! Het venster kan enkel bestanden lezen of schrijven die de gebruiker zelf gekozen heeft
 //! in een venster van Windows of macOS (Opslaan, Openen, Projectmap kiezen) of waarmee het programma
-//! gestart werd (dubbelklik). Die lijst wordt onthouden, zodat Mijn projecten na het herstarten
-//! blijft werken. Al de rest van de computer blijft onbereikbaar, ook als er ooit kwaadaardige
-//! code in het venster zou geraken.
+//! gestart werd (dubbelklik). Die lijst wordt onthouden, zodat een project na het herstarten (bv. via
+//! Reservekopieën) zonder venster in hetzelfde bestand opgeslagen kan worden. Al de rest van
+//! de computer blijft onbereikbaar, ook als er ooit kwaadaardige code in het venster zou geraken.
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
@@ -15,7 +15,7 @@ use std::sync::Mutex;
 /// Projectbestanden.
 pub const PROJECT_EXT: [&str; 2] = ["vsx", "json"];
 /// Wat geschreven mag worden.
-pub const WRITE_EXT: [&str; 4] = ["vsx", "json", "pdf", "xlsx"];
+pub const WRITE_EXT: [&str; 3] = ["vsx", "json", "pdf"];
 /// Een projectbestand is nooit groter dan dit.
 pub const MAX_READ: u64 = 100 * 1024 * 1024;
 /// Hoeveel gekozen bestanden onthouden worden.
@@ -115,6 +115,8 @@ impl Allow {
         self.save();
     }
 
+    /// Sinds 1.0.8 kiest het programma geen projectmap meer; mappen uit een oudere versie blijven gelden (toegang.json).
+    #[cfg_attr(not(test), allow(dead_code))]
     pub fn add_dir(&self, p: &Path) {
         let Some(k) = key(p) else { return };
         if let Ok(mut d) = self.dirs.lock() {
@@ -222,6 +224,9 @@ mod tests {
         assert!(!ext_ok(Path::new("a.exe"), &WRITE_EXT));
         assert!(!ext_ok(Path::new("a"), &WRITE_EXT));
         assert!(!ext_ok(Path::new("a.json.exe"), &WRITE_EXT));
+        // sinds 1.0.8 geen Excel-export meer: ook geen .xlsx schrijven
+        assert!(!ext_ok(Path::new("Materiaal.xlsx"), &WRITE_EXT));
+        assert!(ext_ok(Path::new("Dossier.PDF"), &WRITE_EXT));
     }
 
     #[test]

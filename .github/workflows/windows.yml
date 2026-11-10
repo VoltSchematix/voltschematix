@@ -3,7 +3,7 @@
 #
 # Volgorde:
 #   1. test    – Rust-tests + een echte eindtest van het programma op Windows (openen, opslaan,
-#                PDF, Excel, toegangsbeveiliging, compatibiliteit met de online versie).
+#                PDF, toegangsbeveiliging, compatibiliteit met de online versie).
 #   2. release – enkel als alle tests geslaagd zijn: het installatieprogramma bouwen,
 #                als concept bij Releases zetten, met SHA256SUMS.txt en SBOM's (CycloneDX).
 #

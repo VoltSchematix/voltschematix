@@ -20,7 +20,7 @@ Deze map bevat het programma voor Windows en voor Mac. Het gebruikt exact dezelf
 
 - Het programma maakt zelf geen internetverbinding en kan niet naar een andere pagina wegnavigeren.
 - Het kan enkel bestanden lezen en schrijven die de gebruiker zelf in een venster van Windows of macOS gekozen heeft
-  (of projectbestanden in de gekozen projectmap), of waarmee het programma geopend werd (dubbelklik).
+  of waarmee het programma geopend werd (dubbelklik). Mappen die in een oudere versie als projectmap gekozen waren, blijven toegelaten.
   Die controle gebeurt in het programma zelf (`src-tauri/src/guard.rs`), niet in de webpagina, en is dezelfde op Windows en Mac.
 - Op de Mac houdt de controle rekening met hoofdlettergevoelige schijven: een bestand met een anders geschreven naam is een ander bestand.
 - Alle onderdelen staan vast op een exacte versie; de bouwstappen op GitHub staan vast op een exacte commit.

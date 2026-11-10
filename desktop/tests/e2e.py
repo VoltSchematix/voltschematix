@@ -205,8 +205,8 @@ def test(d, fs, fix, exp, work, check):
         got2 = fs.read(out)
         check(got2 and same(json.loads(got2), json.loads(got)), f'{n}: opnieuw openen en opslaan in hetzelfde bestand: nog altijd identiek')
         first_out = first_out or out
-    # PDF en Excel
-    pdf, xls = W('uit', 'Dossier.pdf'), W('uit', 'Materiaal.xlsx')
+    # PDF
+    pdf = W('uit', 'Dossier.pdf')
     d.queue(pdf)
     d.run(HELP + "__t.$('t-exp').click();await __t.sleep(2500);__t.$('pr_pdf').click();")
     for _ in range(120):
@@ -214,25 +214,6 @@ def test(d, fs, fix, exp, work, check):
             break
         time.sleep(1)
     check(fs.size(pdf) > 100000, f'PDF bewaard via het Windows-venster ({fs.size(pdf)} bytes)')
-    d.queue(xls)
-    d.run(HELP + "__t.$('t-mat').click();await __t.sleep(800);__t.$('mt_xlsx').click();")
-    for _ in range(60):
-        if fs.size(xls) > 3000:
-            break
-        time.sleep(1)
-    check(fs.size(xls) > 3000, f'Excel bewaard via het Windows-venster ({fs.size(xls)} bytes)')
-    # projectmap
-    mapd = W('map')
-    fs.write(PJ.join(mapd, 'Alfa.vsx'), open(os.path.join(exp, names[0] + '.json'), encoding='utf-8').read())
-    fs.write(PJ.join(mapd, 'Beta.json'), open(os.path.join(exp, names[0] + '.json'), encoding='utf-8').read())
-    fs.write(PJ.join(mapd, 'notities.txt'), 'geen project')
-    fs.write(PJ.join(mapd, 'sub', 'Diep.vsx'), '{}')
-    d.queue(mapd)
-    cards = d.run(HELP + "__t.$('t-mp').click();await __t.sleep(800);document.querySelector('[data-mp=\"dir\"]').click();"
-                  "await __t.until(()=>document.querySelectorAll('#mp_grid .mp-card:not(.mp-new)').length>=3);await __t.sleep(800);"
-                  "return [...document.querySelectorAll('#mp_grid .mp-card:not(.mp-new)')].map(c=>c.textContent)")
-    txt = ' '.join(cards or [])
-    check('Alfa.vsx' in txt and 'Beta.json' in txt and 'notities' not in txt and 'Diep' not in txt, 'projectmap: enkel de projectbestanden uit die map verschijnen')
     # toegang: enkel wat gekozen is
     fs.write(W('geheim.json'), '{"wachtwoord":"x"}')
     res = d.run("""const I=window.__TAURI__.core.invoke,r={};
@@ -242,12 +223,12 @@ def test(d, fs, fix, exp, work, check):
       await t('niet-gekozen map lijsten',()=>I('vs_list',{dir:a[1]}));
       await t('.exe schrijven',()=>I('vs_write_bytes',new Uint8Array([77,90]),{headers:{'x-path':encodeURIComponent(a[2])}}));
       await t('niet-gekozen .vsx schrijven',()=>I('vs_write_bytes',new Uint8Array([123,125]),{headers:{'x-path':encodeURIComponent(a[3])}}));
-      await t('bestand in projectmap lezen',()=>I('vs_read_text',{path:a[4]}));
+      await t('eerder gekozen bestand lezen',()=>I('vs_read_text',{path:a[4]}));
       await t('.. in pad',()=>I('vs_read_text',{path:a[5]}));
-      return r""", W('geheim.json'), work, W('uit', 'virus.exe'), W('nietgekozen.vsx'), PJ.join(mapd, 'Beta.json'), PJ.join(mapd, '..', 'geheim.json'))
+      return r""", W('geheim.json'), work, W('uit', 'virus.exe'), W('nietgekozen.vsx'), first_out, PJ.join(W('uit'), '..', 'geheim.json'))
     want = {k: 'geweigerd' for k in res}
-    want['bestand in projectmap lezen'] = 'toegelaten'
-    check(res == want, f'toegang: enkel gekozen bestanden en de projectmap ({res})')
+    want['eerder gekozen bestand lezen'] = 'toegelaten'
+    check(res == want, f'toegang: enkel gekozen bestanden ({res})')
     check(fs.read(W('uit', 'virus.exe')) is None and fs.read(W('nietgekozen.vsx')) is None, 'er is niets geschreven buiten de gekozen bestanden')
     # navigatie naar buiten wordt tegengehouden
     try:
@@ -269,22 +250,26 @@ def test(d, fs, fix, exp, work, check):
     fs.write(W('aanval.vsx'), json.dumps(walk(base)))
     d.queue(W('aanval.vsx'))
     r = d.run(HELP + "__t.$('t-proj').click();__t.$('pj_open').click();await __t.sleep(1500);await __t.settle();"
-              "for(const t of ['t-eend','t-sit','t-mat','t-mp','t-exp']){__t.$(t).click();await __t.sleep(600)}"
+              "for(const t of ['t-eend','t-sit','t-exp']){__t.$(t).click();await __t.sleep(600)}"
               "return [window.__pwn||0,document.querySelectorAll('[onerror],[onload]').length,(window.AEP_errs||[]).length]")
     check(r[0] == 0 and r[1] == 0, f'vervalst projectbestand: geen code uitgevoerd ({r})')
     errs = d.run("return window.AEP_errs||[]")
     check(not errs, 'geen fouten in het programma' + (': ' + str(errs[:2]) if errs else ''))
     d.stop()
-    # herstarten: Mijn projecten en de toegang blijven
+    # herstarten: de reservekopie van een opgeslagen project terugzetten en zonder venster in hetzelfde bestand opslaan
     d.start()
     d.run(HELP + "await __t.until(()=>window.AEP_project&&document.readyState==='complete');await __t.sleep(1500);if(__t.$('pj_rn'))__t.$('pj_rn').click();await __t.settle();")
-    cards = d.run(HELP + "__t.$('t-mp').click();await __t.sleep(1500);return [...document.querySelectorAll('#mp_grid .mp-card:not(.mp-new)')].map(c=>c.textContent)")
-    txt = ' '.join(cards or [])
-    check(PJ.basename(first_out) in txt and 'niet gevonden' not in txt, 'na herstarten: projecten nog in Mijn projecten, bestanden gevonden')
     name0 = PJ.basename(first_out)[:-4]
-    ok_open = d.run(HELP + "const c=[...document.querySelectorAll('#mp_grid .mp-card')].find(c=>c.querySelector('h3')&&c.textContent.includes(a[0]+'.vsx'));"
-                    "if(!c)return false;c.querySelector('[data-mp=\"open\"]').click();return !!await __t.until(()=>/Geopend/.test(__t.$('pj_msg').textContent));", name0)
-    check(ok_open, 'na herstarten: project openen via Mijn projecten, zonder venster')
+    rows = d.run(HELP + "__t.$('t-proj').click();__t.$('pj_bk').click();await __t.until(()=>document.querySelector('#pj_dc .pjr'));await __t.sleep(500);"
+                 "return [...document.querySelectorAll('#pj_dc .pjr')].map(r=>r.textContent)")
+    check(any(name0 in r for r in rows or []), f'na herstarten: project staat bij Reservekopieën ({len(rows or [])} rijen)')
+    ok_open = d.run(HELP + "const r=[...document.querySelectorAll('#pj_dc .pjr')].find(r=>r.querySelector('b')&&r.querySelector('b').textContent===a[0]);"
+                    "if(!r)return false;r.querySelector('[data-r]').click();return !!await __t.until(()=>__t.$('pj_name').textContent===a[0]);", name0)
+    check(ok_open, 'na herstarten: reservekopie teruggezet, gekoppeld aan het bestand')
+    msg = d.run(HELP + "await __t.settle();__t.$('k_naam').value='Na herstarten';__t.$('k_naam').dispatchEvent(new Event('input',{bubbles:true}));await __t.sleep(400);"
+                "__t.$('pj_save').click();return await __t.until(()=>/Opgeslagen/.test(__t.$('pj_msg').textContent)&&__t.$('pj_msg').textContent)")
+    got3 = fs.read(first_out)
+    check(got3 and json.loads(got3)['doc'].get('k_naam') == 'Na herstarten', f'na herstarten: Opslaan schrijft zonder venster in hetzelfde bestand ({msg})')
     d.stop()
 
 

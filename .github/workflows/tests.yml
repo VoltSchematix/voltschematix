@@ -1,0 +1,207 @@
+# Alleen testen, niets uitbrengen: Windows-programma (echte eindtest), Mac-programma (bouwen + starten)
+# en de website in Chrome, Firefox en Safari (WebKit), met de uitwisseling van projectbestanden tussen alle versies.
+# Loopt vanzelf bij een pull request naar main, of: tabblad Actions → "Testen (zonder uitbrengen)" → Run workflow → kies de tak.
+# Maakt GEEN release en GEEN concept-release. Toegevoegd bij 1.0.8.
+name: Testen (zonder uitbrengen)
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  windows:
+    name: Testen op Windows
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Node installeren
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: lts/*
+
+      - name: Python installeren
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+
+      - name: Rust installeren
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+
+      - name: Rust-cache
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: desktop/src-tauri
+
+      - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
+        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+
+      - name: Bouwhulpmiddelen installeren
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Testversie bouwen (zonder installatieprogramma)
+        working-directory: desktop
+        run: npm run tauri build -- --no-bundle --features e2e --config src-tauri/tauri.e2e.conf.json
+
+      - name: Testhulpmiddel installeren (Edge WebDriver, passend bij WebView2)
+        shell: pwsh
+        run: |
+          cargo install --git https://github.com/chippers/msedgedriver-tool --rev 8c4b34f51b45f5cf08013366d703de464ab871d1 --locked
+          New-Item -ItemType Directory -Force -Path "$env:RUNNER_TEMP\driver" | Out-Null
+          Push-Location "$env:RUNNER_TEMP\driver"
+          msedgedriver-tool
+          Pop-Location
+          & "$env:RUNNER_TEMP\driver\msedgedriver.exe" --version
+
+      - name: Eindtest van het programma
+        shell: pwsh
+        timeout-minutes: 25
+        env:
+          VS_E2E_QUEUE: ${{ runner.temp }}\wachtrij.txt
+          PYTHONIOENCODING: utf-8
+        run: |
+          New-Item -ItemType File -Force -Path $env:VS_E2E_QUEUE | Out-Null
+          $exe = Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File | Where-Object { $_.Name -ieq 'voltschematix.exe' } | Select-Object -First 1
+          if (-not $exe) { Get-ChildItem desktop\src-tauri\target\release -Filter *.exe -File; throw 'Programma niet gevonden' }
+          Write-Host "Programma: $($exe.FullName)"
+          $drv = Start-Process -FilePath "$env:RUNNER_TEMP\driver\msedgedriver.exe" -ArgumentList '--port=4444', '--verbose', "--log-path=$env:RUNNER_TEMP\driver.log" -PassThru -NoNewWindow
+          Start-Sleep -Seconds 3
+          $code = 1
+          try {
+            python desktop/tests/e2e.py $exe.FullName desktop/tests/fixtures desktop/tests/expected "$env:RUNNER_TEMP\e2e"
+            $code = $LASTEXITCODE
+          } finally {
+            Stop-Process -Id $drv.Id -Force -ErrorAction SilentlyContinue
+            Get-Process voltschematix -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+          }
+          exit $code
+
+      - name: Meldingen van Edge WebDriver (enkel bij een fout)
+        if: failure()
+        shell: pwsh
+        run: |
+          $log = "$env:RUNNER_TEMP\driver.log"
+          if (Test-Path $log) {
+            Get-Content $log | Where-Object { $_ -notmatch 'DevTools WebSocket (Event|Response|Command): (Page|Runtime|Log|Network)\.' } | Select-Object -Last 120
+          } else { Write-Host 'geen logbestand' }
+          Write-Host '--- uitvoer van het programma ---'
+          Get-Content "$env:RUNNER_TEMP\programma.log" -ErrorAction SilentlyContinue | Select-Object -Last 60
+
+  mac:
+    name: Testen op Mac
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - name: Node installeren
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: lts/*
+
+      - name: Rust installeren (Apple-chip en Intel)
+        uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+        with:
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
+
+      - name: Rust-cache
+        uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+        with:
+          workspaces: desktop/src-tauri
+
+      - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
+        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+
+      - name: Bouwhulpmiddelen installeren
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: Programma bouwen (Apple-chip en Intel samen)
+        working-directory: desktop
+        run: npm run tauri build -- --target universal-apple-darwin --bundles app
+
+      - name: Programma controleren en starten
+        timeout-minutes: 10
+        run: |
+          set -euo pipefail
+          # volledig pad: "open -a" zoekt bij een relatief pad naar een programma met die naam
+          APP="$PWD/$(ls -d desktop/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app | head -n 1)"
+          echo "Programma: $APP"
+          BIN="$APP/Contents/MacOS/$(/usr/libexec/PlistBuddy -c 'Print :CFBundleExecutable' "$APP/Contents/Info.plist")"
+          echo "--- werkt op Apple-chip en Intel"
+          ARCHS=$(lipo -archs "$BIN"); echo "$ARCHS"
+          echo "$ARCHS" | grep -q arm64 && echo "$ARCHS" | grep -q x86_64
+          echo "--- ondertekend (ad hoc), niets gewijzigd"
+          codesign --verify --deep --strict --verbose=2 "$APP"
+          echo "--- .vsx opent met VoltSchematix"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleDocumentTypes' "$APP/Contents/Info.plist" | tee /tmp/doctypes.txt
+          grep -q vsx /tmp/doctypes.txt
+          echo "--- versie"
+          /usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist"
+          echo "--- starten (zoals met een klik in de map Programma's) en 20 seconden laten lopen"
+          open --stdout "$RUNNER_TEMP/programma.log" --stderr "$RUNNER_TEMP/programma.log" "$APP"
+          sleep 20
+          PID=$(pgrep -f "$BIN" | head -n 1 || true)
+          if [ -z "$PID" ]; then echo "Het programma is gestopt:"; cat "$RUNNER_TEMP/programma.log" || true; exit 1; fi
+          echo "draait (proces $PID)"
+          echo "--- een project openen zoals bij een dubbelklik"
+          # Klein testproject, hier aangemaakt zodat de test niet afhangt van een bestand in de repository.
+          cat > "$RUNNER_TEMP/Test project.vsx" <<'EOF'
+          {"app":"AutoElectricity Plan","versie":1,"naam":"Testproject Mac","datum":"2026-10-31T12:00:00.000Z",
+           "doc":{"k_naam":"Test Mac","k_straat":"Kerkstraat","k_nr":"12","k_pc":"9000","k_gem":"Gent","p_net":"Monofasig 2×230 V","p_amp":"40 A","p_aard_sys":"TT"},
+           "sch":{"num":"code","bord":"Kast 1","kabel":"XVB 4G10","icn":false,"groups":[
+             {"diff":{"typ":"A","mA":300,"In":40,"polen":2},"kringen":[
+               {"letter":"","naam":"Stopcontacten","bev":{"polen":2,"curve":"C","In":20,"icn":3000},
+                "kabel":{"type":"","cca":false,"aders":3,"sectie":"2,5"},
+                "punten":[{"items":[{"s":"sc","n":2,"aard":true,"ip":"IP20"}]}]}]}]}}
+          EOF
+          open -a "$APP" "$RUNNER_TEMP/Test project.vsx"
+          sleep 8
+          if ! kill -0 "$PID" 2>/dev/null; then echo "Het programma is gestopt na het openen:"; cat "$RUNNER_TEMP/programma.log" || true; exit 1; fi
+          N=$(pgrep -f "$BIN" | wc -l | tr -d ' ')
+          echo "aantal vensters/processen: $N"
+          [ "$N" = "1" ]
+          kill "$PID" || true
+          echo "OK: het programma start, opent een project en blijft draaien"
+
+      - name: Uitvoer van het programma (enkel bij een fout)
+        if: failure()
+        run: cat "$RUNNER_TEMP/programma.log" 2>/dev/null | tail -n 80 || echo 'geen uitvoer'
+
+  browsers:
+    name: Website in Chrome, Firefox en Safari (WebKit)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+      - name: Bestanden ophalen
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Python installeren
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Playwright en ${{ matrix.browser }} installeren
+        run: |
+          pip install playwright==1.63.0
+          python -m playwright install --with-deps ${{ matrix.browser }}
+      - name: Uitwisseling van projectbestanden (alle versies en platformen)
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: python desktop/tests/compat.py index.html desktop/dist/index.html desktop/tests/mock.js desktop/tests/v107/index.html desktop/tests/v107/desktop.html desktop/tests/v107/mock.js desktop/tests/compat-fixtures "$RUNNER_TEMP/compat.json"
