@@ -40,6 +40,7 @@
 **Veiligheid en herstellingen**
 - PDF.js 6.2.108 (achtergrondfoto uit een PDF), veiligheidslek CVE-2024-4367 opgelost; alles werkt zonder internet.
 - Herstellingen uit 1.0.7: veld *Net* in het Frans en Engels, afdrukinstellingen van een ouder bestand, afdrukvoorbeeld dat soms niet bijwerkte, werkmodus in het Frans en Engels, Ongedaan maken na het wijzigen van een losse tekst.
+- Symbolen netjes getekend bij combinaties: drukknop en schakelaar met rolluik, dimmer of trek (ook samen), contactdoos met 3 fasen en transformator of schakelaar, verdeelbordkader dat meegroeit, schakelaar/sensor/wandmontage bij TL, spot, LED en signalisatielamp, verwarmen/koelen bij de ketel, tekentjes bij domotica.
 
 Projecten blijven uitwisselbaar tussen Windows, Mac, de online versie en het HTML-bestand. Projecten van 1.0.7 openen zonder aanpassing.
 
@@ -81,6 +82,7 @@ Projecten blijven uitwisselbaar tussen Windows, Mac, de online versie en het HTM
 **Sécurité et corrections**
 - PDF.js 6.2.108 (photo de fond depuis un PDF), faille CVE-2024-4367 corrigée ; tout fonctionne sans internet.
 - Corrections de la 1.0.7 : champ *Réseau* en français et en anglais, réglages d'impression d'un ancien fichier, aperçu d'impression qui ne se mettait parfois pas à jour, mode travail en français et en anglais, Annuler après la modification d'un texte libre.
+- Symboles bien dessinés dans les combinaisons : bouton-poussoir et interrupteur avec volet, variateur ou tirage (aussi ensemble), prise triphasée avec transformateur ou interrupteur, cadre du tableau qui s'agrandit, interrupteur/capteur/montage mural pour TL, spot, LED et lampe de signalisation, chauffage/refroidissement de la chaudière, pictogrammes de la domotique.
 
 Les projets restent échangeables entre Windows, Mac, la version en ligne et le fichier HTML. Les projets de la 1.0.7 s'ouvrent sans modification.
 
@@ -122,5 +124,6 @@ Les projets restent échangeables entre Windows, Mac, la version en ligne et le 
 **Security and fixes**
 - PDF.js 6.2.108 (background photo from a PDF), security issue CVE-2024-4367 fixed; everything works without internet.
 - Fixes from 1.0.7: *Network* field in French and English, print settings of an older file, print preview that sometimes did not update, work mode in French and English, Undo after editing a free text.
+- Symbols drawn neatly in combinations: push button and switch with shutter, dimmer or pull cord (also together), three-phase socket with transformer or switch, distribution board frame that grows with the symbol, switch/sensor/wall mounting for fluorescent, spot, LED and signal lamp, heating/cooling on the boiler, home automation icons.
 
 Projects stay interchangeable between Windows, Mac, the online version and the HTML file. Projects from 1.0.7 open without changes.

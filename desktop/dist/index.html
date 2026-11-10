@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-awU45L0KVYxa+QLKyP1sN/1spCKReKUQoYyuSJ5Tuz4=' 'sha256-7enjFJySC/GYdSWH9EZy2TRY6ceGhSQDhwV4S2UxVlg=' 'sha256-iU8E+bnDhOdMH/O6uLxPcca3S0NHdgrz+kihL2kTeyE=' 'sha256-5prwyuFEZF3H1tR28ANWC8y0wv2NwKLgiLgMA7Z5JeY=' 'sha256-7bg2xCjdK1gefQCp4DXR2Su9UZOQ+MtbJ7oJPnm9LA4=' 'sha256-yoPKR/J95GY2xs754G+2RFwY0o+/0K8SyQLFO2PvP3U=' 'sha256-KcwozC3ts+MLaXRmVKMABLRCdDKMXC63hIZrYTf+BoQ=' 'sha256-vyJCw0r47p6FXRXbpGVsFwGJTNOzFdNlW4wm2Bya58k=' 'sha256-bspeGqPHb6sY1jTy/ly0lfYVDff67XB377HzPI7Z+lM=' 'sha256-fO89nfIcTFojMz8ZJKL9yMf98M/uz/aRpiTdW+isuMo=' 'sha256-QySUQNUjzJkaoIjn99hyOub42pJ8XvhJCqExvxm7Mnw=' 'sha256-0NAqfx3u/gf/HtBj/SEBIhU8quz/tJV2GdlAw6gcwD0=' 'sha256-BbfHABUlxLwO1HRQbCiWK6sSP1rs+f45dQ1tr0lixlk=' 'sha256-I+eEw8iltjchdh2uOvbtjz7so1lFO/vy3QJDe17xSvo=' 'sha256-BpPL+wLr6BLm1WeukN46p9NzuGi3ITGUEviTCiKT4ZE=' 'sha256-5lUfzcMvCdaFOyxRJtGNAdlEfg2mGKQaEevu4PbCDVQ=' 'sha256-xKeCl5Z0S6OD+qgdsBTlJwol/1+zeLDzd6jUTMwKGmE=' 'sha256-heihdMaDVyPIg91LYscx1MsESppCcteWp0siZXDQIsI='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src data: blob: ipc: http://ipc.localhost; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><title>VoltSchematix</title></head><body>
+<html lang="nl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-awU45L0KVYxa+QLKyP1sN/1spCKReKUQoYyuSJ5Tuz4=' 'sha256-7enjFJySC/GYdSWH9EZy2TRY6ceGhSQDhwV4S2UxVlg=' 'sha256-rUi2WMCvTG5qT0FGFc09A0io0ZSiPhDLduTBdi4FB98=' 'sha256-5prwyuFEZF3H1tR28ANWC8y0wv2NwKLgiLgMA7Z5JeY=' 'sha256-7bg2xCjdK1gefQCp4DXR2Su9UZOQ+MtbJ7oJPnm9LA4=' 'sha256-yoPKR/J95GY2xs754G+2RFwY0o+/0K8SyQLFO2PvP3U=' 'sha256-KcwozC3ts+MLaXRmVKMABLRCdDKMXC63hIZrYTf+BoQ=' 'sha256-vyJCw0r47p6FXRXbpGVsFwGJTNOzFdNlW4wm2Bya58k=' 'sha256-bspeGqPHb6sY1jTy/ly0lfYVDff67XB377HzPI7Z+lM=' 'sha256-fO89nfIcTFojMz8ZJKL9yMf98M/uz/aRpiTdW+isuMo=' 'sha256-QySUQNUjzJkaoIjn99hyOub42pJ8XvhJCqExvxm7Mnw=' 'sha256-0NAqfx3u/gf/HtBj/SEBIhU8quz/tJV2GdlAw6gcwD0=' 'sha256-BbfHABUlxLwO1HRQbCiWK6sSP1rs+f45dQ1tr0lixlk=' 'sha256-I+eEw8iltjchdh2uOvbtjz7so1lFO/vy3QJDe17xSvo=' 'sha256-BpPL+wLr6BLm1WeukN46p9NzuGi3ITGUEviTCiKT4ZE=' 'sha256-5lUfzcMvCdaFOyxRJtGNAdlEfg2mGKQaEevu4PbCDVQ=' 'sha256-xKeCl5Z0S6OD+qgdsBTlJwol/1+zeLDzd6jUTMwKGmE=' 'sha256-heihdMaDVyPIg91LYscx1MsESppCcteWp0siZXDQIsI='; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; connect-src data: blob: ipc: http://ipc.localhost; worker-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"><meta name="referrer" content="no-referrer"><title>VoltSchematix</title></head><body>
 <script>/* ================================================================
    PROGRAMMA VOOR WINDOWS EN MAC — aansluiting op het besturingssysteem (Tauri)
    Zorgt dat opslaan en openen via de gewone vensters van Windows of macOS werken,
@@ -1090,12 +1090,24 @@ function lev(x,y,dir,poles,r=4,len=16,end){const u=DIRS[dir],sx=x+u[0]*r,sy=y+u[
   let o=P(s);
   if(end==='trek'){const ax=ex+tx*5+2,ay=ey+ty*5;o+=P(`M${ax} ${ay-3}v11M${ax-2.2} ${ay+5}L${ax} ${ay+8}L${ax+2.2} ${ay+5}`)}
   if(end==='dim')o+=Poly([[ex,ey],[ex+7,ey+3],[ex,ey+6]]);
-  if(end==='rol')o+=Poly([[ex+6,ey-3],[ex+3.5,ey+1],[ex+8.5,ey+1]],'#111')+Poly([[ex+6,ey+7],[ex+3.5,ey+3],[ex+8.5,ey+3]],'#111');
+  if(end&&typeof end==='object'){/* meerdere tekens (dimmer, trek, rolluik) naast elkaar, rechts van de streepjes voor de polen */
+    const ms=['dim','trek','rol'].filter(k=>end[k]);let cx;
+    if(ms[0]==='dim'&&poles===1){o+=Poly([[ex,ey],[ex+7,ey+3],[ex,ey+6]]);ms.shift();cx=ex+9.5}else cx=ex+tx*5+2;
+    for(const m of ms){
+      if(m==='dim'){o+=Poly([[cx,ey],[cx+7,ey+3],[cx,ey+6]]);cx+=9.5}
+      else if(m==='trek'){const ax=cx+2.2,ay=ey+ty*5;o+=P(`M${ax} ${ay-3}v11M${ax-2.2} ${ay+5}L${ax} ${ay+8}L${ax+2.2} ${ay+5}`);cx+=6.9}
+      else{const ax=cx+2.4,c=ey+3,A='fill="#111" stroke-width=".6" stroke-linejoin="round"';o+=P(`M${ax} ${c-5.25}l-2.4 3.6h4.8Z`,A)+P(`M${ax} ${c+5.25}l-2.4 -3.6h4.8Z`,A);cx+=7.3}}
+    levR=cx-2.5}
   return o}
+let levR=0;
 /* ---------- contactdoos ---------- */
 function scGeo(it){const n=it.n||1,ph=it.fasen===3||it.nulL;return {n,ph,x0off:-6+(ph?11:0)}}
 function gSc(x,y,it){const g=scGeo(it),st=12,x0=x+g.x0off,aard=it.aard!==false,kind=it.kind!==false;let s='';
-  if(g.ph){let mx=x0-24;const sl=xx=>P(`M${xx-3} ${y+5}L${xx+3} ${y-5}`,'stroke-width="1.2"');
+  /* kader (verdeelbord) groeit mee met transformator en schakelaar; de streepjes (3 fasen) schuiven op zodat ze
+     niets raken en buiten het kader staan */
+  let L=x0-7,Tp=y-15;if(it.trafo)L=Math.min(L,x0-11);if(it.sw){L=Math.min(L,x0-13.5);Tp=Math.min(Tp,y-21)}
+  let sh=0;if(g.ph){sh=it.trafo?8:it.sw?4:0;if(it.vb)sh=Math.max(sh,x0-3-L)}
+  if(g.ph){let mx=x0-24-sh;const sl=xx=>P(`M${xx-3} ${y+5}L${xx+3} ${y-5}`,'stroke-width="1.2"');
     for(let i=0;i<(it.fasen===3?3:1);i++){s+=sl(mx);mx+=4}mx+=2;
     if(it.nul!==false){s+=sl(mx)+Dot(mx-3,y+5,1.7);mx+=6}if(aard)s+=sl(mx)+P(`M${mx-3} ${y+5}h6`,'stroke-width="1.2"')}
   if(it.trafo)s+=C(x0-2,y,6,1);
@@ -1105,13 +1117,16 @@ function gSc(x,y,it){const g=scGeo(it),st=12,x0=x+g.x0off,aard=it.aard!==false,k
     s+=P(`M${gx+10} ${y-8}A8 8 0 0 0 ${gx+10} ${y+8}`);
     if(kind)s+=P(`M${gx+10} ${y-8}v-4M${gx+10} ${y+8}v4`)}
   if(it.sw)s+=lev(x0+3,y-2,'ul',it.sw==='dub'?2:1,8,10);
-  if(it.vb)s+=R(x0-7,y-15,st+16,28)+P(`M${x0-7} ${y+16}h${st+16}`);
+  if(it.vb)s+=L===x0-7&&Tp===y-15?R(x0-7,y-15,st+16,28)+P(`M${x0-7} ${y+16}h${st+16}`):R(L,Tp,x0+21-L,y+13-Tp)+P(`M${L} ${y+16}h${x0+21-L}`);
   return s}
 /* ---------- schakelaar ---------- */
 function gSw(x,y,it){const t=it.type||'enk',p=it.polen??1;let s='';
-  const end=it.trek?'trek':it.dim?'dim':it.rol?'rol':null;
+  const ms={dim:!!it.dim,trek:!!it.trek,rol:!!it.rol},nm=ms.dim+ms.trek+ms.rol;
+  /* trek alleen of dimmer alleen (1 pool) blijven zoals vroeger; anders de tekens naast elkaar */
+  const end=!nm?null:nm===1&&(ms.trek||(ms.dim&&p===1))?(ms.trek?'trek':'dim'):ms;levR=0;
+  const e={l:-10,r:18,b:8};
   if(t==='dubwis'){s+=`<rect x="${x-11}" y="${y-4}" width="22" height="8" rx="4" fill="#fff"/>`;
-    [[-4,0],[4,0]].forEach(([dx])=>{s+=lev(x+dx,y,'ur',p,4,14)+lev(x+dx,y,'dl',p,4,14)});return s+vbBox(x,y,it)}
+    [[-4,0],[4,0]].forEach(([dx])=>{s+=lev(x+dx,y,'ur',p,4,14)+lev(x+dx,y,'dl',p,4,14)});return s+vbBox(x,y,it,{l:-20.5,r:18,b:19})}
   if(t==='kruis')s+=lev(x,y,'ur',p,4,16,end)+lev(x,y,'dl',p)+lev(x,y,'ul',p)+lev(x,y,'dr',p);
   else if(t==='wis')s+=lev(x,y,'ur',p,4,16,end)+lev(x,y,'dl',p);
   else if(t==='dubaan')s+=lev(x,y,'ul',p)+lev(x,y,'ur',p,4,16,end);
@@ -1119,26 +1134,41 @@ function gSw(x,y,it){const t=it.type||'enk',p=it.polen??1;let s='';
   s+=C(x,y,4,1);if(it.verk)s+=P(X(x,y,2.8),'stroke-width="1"');
   if(it.sig)s+=C(x-11,y,4.5,1)+P(X(x-11,y,3.2),'stroke-width="1"');
   if(it.vertr)s+=tc(x+3,y-16,'t',9);
-  return s+vbBox(x,y,it)}
-function vbBox(x,y,it){return it.vb?R(x-10,y-22,28,30)+P(`M${x-10} ${y+11}h28`):''}
+  /* verdeelbordkader groeit mee met wat buiten het gewone kader zou vallen */
+  if(t==='kruis'||t==='wis'||t==='dubaan')e.l=-17.5;if(t==='kruis'||t==='wis')e.b=20.5;
+  if(it.sig)e.l=Math.min(e.l,-18.5);
+  {const mr=end==='trek'?x+10+4.33+4.2:end==='dim'?x+17:levR;if(mr-x>17.5)e.r=mr-x+2.5}
+  return s+vbBox(x,y,it,e)}
+function vbBox(x,y,it,e){if(!it.vb)return '';
+  if(!e||(e.l===-10&&e.r===18&&e.b===8))return R(x-10,y-22,28,30)+P(`M${x-10} ${y+11}h28`);
+  return R(x+e.l,y-22,e.r-e.l,22+e.b)+P(`M${x+e.l} ${y+(e.b+3)}h${e.r-e.l}`)}
 /* ---------- drukknop ---------- */
 function gDk(x,y,it){const r=it.compact?4:7;let s=C(x,y,r,1);
   if(it.verk)s+=C(x,y,r*.55,1)+P(X(x,y,r*.38),'stroke-width="1"');else s+=C(x,y,it.compact?1.4:2.6);
-  if(it.afg)s+=P(`M${x-6} ${y-r-1}v-3h12v3`);
-  if(it.rol)s+=Poly([[x-6,y-13],[x-8.5,y-9],[x-3.5,y-9]],'#111')+Poly([[x-6,y-4],[x-8.5,y-8],[x-3.5,y-8]],'#111');
-  if(it.dim)s+=P(`M${x-6} ${y-5}l-4 -4`)+Poly([[x-10,y-9],[x-3,y-12],[x-3,y-6]]);
-  if((it.knoppen||1)>1)s+=T(x+r+1,y-r+1,'x'+it.knoppen,{fs:7.5});
+  const k=it.compact?.7:1;
+  if(it.afg)s+=it.compact?P(`M${x-r+1} ${y-r-1}v-3h${2*r-2}v3`):P(`M${x-6} ${y-r-1}v-3h12v3`);
+  /* rolluik: twee losse pijltjes op/neer links boven de knop, buiten de cirkel en het schermpje */
+  if(it.rol){const ax=x-r-4*k,t=y-r-1,A='fill="#111" stroke-width=".6" stroke-linejoin="round"';
+    s+=P(`M${ax} ${t-9*k}l${-2.4*k} ${3.6*k}h${4.8*k}Z`,A)+P(`M${ax} ${t+1.5*k}l${-2.4*k} ${-3.6*k}h${4.8*k}Z`,A)}
+  /* dimmer: links boven; met rolluik rechts boven (gespiegeld), met schermpje iets verder van de knop */
+  if(it.dim){const sx=(it.rol?1:-1)*(it.compact?4/7:1),m=it.compact?4/7:1,o=it.afg&&!it.rol?6:0;
+    s+=P(`M${x+sx*6} ${y-5*m}l${sx*(4+o)} ${(-4-o)*m}`)+Poly([[x+sx*(10+o),y-(9+o)*m],[x+sx*(3+o),y-(12+o)*m],[x+sx*(3+o),y-(6+o)*m]])}
+  if((it.knoppen||1)>1)s+=T(x+r+1+(it.dim&&it.rol?8:0),y-r+1,'x'+it.knoppen,{fs:7.5});
   return s}
 /* ---------- verlichting ---------- */
 function gLamp(x,y,it){const so=it.soort||'punt';let s='';
   if(so==='tl'){const n=it.buizen||1;for(let i=0;i<n;i++){const yy=y+(i-(n-1)/2)*4;s+=P(`M${x-14} ${yy}H${x+14}`)}s+=P(`M${x-14} ${y-3-(n-1)*2}v${6+(n-1)*4}M${x+14} ${y-3-(n-1)*2}v${6+(n-1)*4}`);
     if(it.nood==='cen')s+=P(X(x,y-9,3.5))+Dot(x,y-9,1.6);if(it.nood==='dec')s+=R(x-5,y-14,10,10)+P(X(x,y-9,3.2))+Dot(x,y-9,1.6);
-    if(it.mont==='wand')s+=P(`M${x-8} ${y+8}h16`);return s}
-  if(so==='spot')return s+P(`M${x-2} ${y-8.66}A10 10 0 0 0 ${x-2} ${y+8.66}`)+C(x+3,y,6,1)+P(X(x+3,y,4.2));/* het boogje rond de spot ligt concentrisch, vlak rond het lichtpunt */
-  if(so==='sig')return C(x,y,7,1)+P(X(x,y,5));
+    if(it.mont==='wand')s+=P(`M${x-8} ${y+8+(n-1)*2}h16`);
+    if(it.sw)s+=P(`M${x+14} ${y-3-(n-1)*2}l4 -2.5`);if(it.sensor)s+=lSen(x+10,y+3+(n-1)*2,it);return s}
+  if(so==='spot'){s+=P(`M${x-2} ${y-8.66}A10 10 0 0 0 ${x-2} ${y+8.66}`)+C(x+3,y,6,1)+P(X(x+3,y,4.2));/* het boogje rond de spot ligt concentrisch, vlak rond het lichtpunt */
+    if(it.mont==='wand')s+=P(`M${x-8} ${y+12}h18`);if(it.sw)s+=P(`M${x+7.24} ${y-4.24}l2.5 -2.5l4 2.5`);if(it.sensor)s+=lSen(x+5,y+8,it);return s}
+  if(so==='sig'){s=C(x,y,7,1)+P(X(x,y,5));
+    if(it.mont==='wand')s+=P(`M${x-9} ${y+12}h18`);if(it.sw)s+=P(`M${x+4.95} ${y-4.95}l2.5 -2.5l4 2.5`);if(it.sensor)s+=lSen(x+5,y+8,it);return s}
   if(so==='led'||so==='ledstrip'){const n=so==='led'?1:3,w=10;let x0=x-(n*w)/2;
     for(let i=0;i<n;i++){const a=x0+i*w;s+=Poly([[a,y-5],[a+8,y],[a,y+5]])+P(`M${a+8} ${y-5}v10`)}
-    s+=P(`M${x-1} ${y-8}l4 -6M${x+3} ${y-8}l4 -6`,'stroke-width="1"')+Poly([[x+3,y-14],[x+1.2,y-11],[x+4,y-11]],'#111')+Poly([[x+7,y-14],[x+5.2,y-11],[x+8,y-11]],'#111');return s}
+    s+=P(`M${x-1} ${y-8}l4 -6M${x+3} ${y-8}l4 -6`,'stroke-width="1"')+Poly([[x+3,y-14],[x+1.2,y-11],[x+4,y-11]],'#111')+Poly([[x+7,y-14],[x+5.2,y-11],[x+8,y-11]],'#111');
+    const rx=x0+(n-1)*w+8;if(it.mont==='wand')s+=P(`M${x0-2} ${y+9}h${n*w+2}`);if(it.sw)s+=P(`M${rx} ${y-5}l4 2.5`);if(it.sensor)s+=lSen(rx,y+7,it);return s}
   s+=P(X(x,y,7.5));
   if(it.nood==='cen')s+=Dot(x,y,3.4);
   if(it.nood==='dec')s+=R(x-10,y-10,20,20)+Dot(x,y,3.4);
@@ -1146,6 +1176,8 @@ function gLamp(x,y,it){const so=it.soort||'punt';let s='';
   if(it.sw)s+=P(`M${x+7.5} ${y-7.5}l4 2.5`);
   if(it.sensor)s+=P(`M${x+5} ${y+8}v6h3`)+Poly([[x+8,y+14],[x+15,y+10.5],[x+15,y+17.5]])+(it.sensor==='schemer'?T(x+17,y+18,'S',{fs:7,w:700}):P(`M${x+17} ${y+10}l2 -1M${x+17} ${y+14}h2.5M${x+17} ${y+18}l2 1`,'stroke-width="1"'));
   return s}
+/* ingebouwde sensor (zelfde teken als bij het gewone lichtpunt), vanaf punt ax,ay */
+function lSen(ax,ay,it){return P(`M${ax} ${ay}v6h3`)+Poly([[ax+3,ay+6],[ax+10,ay+2.5],[ax+10,ay+9.5]])+(it.sensor==='schemer'?T(ax+12,ay+10,'S',{fs:7,w:700}):P(`M${ax+12} ${ay+2}l2 -1M${ax+12} ${ay+6}h2.5M${ax+12} ${ay+10}l2 1`,'stroke-width="1"'))}
 /* ---------- toestellen ---------- */
 const APP={
   gen:{n:'Toestel',d:''},
@@ -1180,7 +1212,9 @@ function gKetel(x,y,it){let s=BX(x-12,y-12,24,24);const e=it.energie;
   if(e==='vl')s+=Dot(x,y+6,3.2);if(e==='va')s+=`<rect x="${x-3}" y="${y+3}" width="6" height="6" fill="#111" stroke="none"/>`;
   const t=it.type;if(t==='bo')s+=R(x-4,y-9,8,4);if(t==='tap')s+=P(`M${x-11} ${y-9}L${x+11} ${y-4}L${x-11} ${y+1}`,'stroke-width="1"');
   if(t==='ww')s+=P(`M${x-11} ${y-9}h3l3 8l3 -8l3 8l3 -8h3`,'stroke-width="1"');if(t==='wkk')s+=C(x,y-6,4)+T(x-2.2,y-3.5,'G',{fs:6});
-  const w={verw:'+',koel:'-',beide:'+/-'}[it.warmte];if(w)s+=T(x+4,y+10,w,{fs:7});return s}
+  /* verwarmen/koelen: klein + en/of - rechts onderaan, los van het energieteken */
+  const w=it.warmte,pl=yy=>P(`M${x+8} ${yy-1.75}v3.5M${x+6.25} ${yy}h3.5`,'stroke-width="1"'),mi=yy=>P(`M${x+6.25} ${yy}h3.5`,'stroke-width="1"');
+  if(w==='verw')s+=pl(y+6.5);if(w==='koel')s+=mi(y+6.5);if(w==='beide')s+=pl(y+3.5)+mi(y+8);return s}
 /* ---------- veiligheid & communicatie ---------- */
 const DET={ir:'Infrarood',us:'Ultrasoon',radar:'Radar',rond:'Rondom',ger:'Gericht',alg:'Algemeen'};
 function gDet(x,y,it){const v=it.v||'ir';
@@ -1228,7 +1262,9 @@ function gRel(x,y,it){const v=it.v||'relais';let s=BX(x-13,y-7,26,14);
   if(v==='tijd')s+=C(x-6,y,4)+P(`M${x-6} ${y-2.5}V${y}h2.5M${x-1} ${y}h4l4 -3M${x+8} ${y}h3`,'stroke-width="1"');if(v==='minut')s+=tc(x,y+3.5,'t',10);return s}
 function gDom(x,y,it){let s=BX(x-8,y-14,16,28)+P(`M${x-8} ${y-7}h16`);
   const ic=[];if(it.det)ic.push('))');if(it.radio)ic.push('((·))');if(it.dkn)ic.push('◎');if(it.prog)ic.push('◷');
-  if(ic.length)s+=tc(x,y-8.5,ic.join(''),5.5);
+  if(ic.length){const W={'))':.667,'((·))':1.666,'◎':.9,'◷':.9},sw=ic.reduce((a,k)=>a+W[k],0);
+    /* passen ze niet in het vakje (16 breed), dan kleiner */
+    if(sw*5.5<=14.5)s+=tc(x,y-8.5,ic.join(''),5.5);else{const fs=+(14/sw).toFixed(2);s+=tc(x,+(y-10.5+fs*.36).toFixed(2),ic.join(''),fs)}}
   const c=it.inh||'dk';if(c==='dk')s+=C(x,y+3,5)+C(x,y+3,1.6);if(c==='lamp')s+=P(X(x,y+3,4.5));if(c==='sc')s+=P(`M${x-4} ${y-1}h3v8h-3M${x+5} ${y-1}a4 4 0 0 0 0 8`,'stroke-width="1"');
   if(c==='sw')s+=C(x-1,y+5,2,1)+P(`M${x} ${y+3.5}l4 -6`,'stroke-width="1"');if(c==='touch')s+=R(x-5,y-2,10,10)+P(`M${x} ${y}v6M${x-2} ${y+2}v4`,'stroke-width="1"');return s}
 function gMod(x,y,it){let s=BX(x-9,y-17,18,34);
