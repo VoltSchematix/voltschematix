@@ -202,7 +202,9 @@ jobs:
       - name: Playwright en ${{ matrix.browser }} installeren
         run: |
           pip install playwright==1.63.0
-          python -m playwright install --with-deps ${{ matrix.browser }}
+          # eerst met de systeemonderdelen (lettertypes ...); lukt dat niet omdat de pakketserver onbereikbaar is,
+          # dan enkel de browser zelf: de tests tonen dan vanzelf of dat volstaat
+          python -m playwright install --with-deps ${{ matrix.browser }} || python -m playwright install ${{ matrix.browser }}
       - name: Uitwisseling van projectbestanden (alle versies en platformen)
         env:
           VS_BROWSER: ${{ matrix.browser }}
