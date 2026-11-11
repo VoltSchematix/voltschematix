@@ -44,15 +44,15 @@ jobs:
           workspaces: desktop/src-tauri
 
       - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
-        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+        run: cargo test --locked --manifest-path desktop/src-tauri/Cargo.toml
 
       - name: Bouwhulpmiddelen installeren
         working-directory: desktop
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Testversie bouwen (zonder installatieprogramma)
         working-directory: desktop
-        run: npm run tauri build -- --no-bundle --features e2e --config src-tauri/tauri.e2e.conf.json
+        run: npm run tauri build -- --no-bundle --features e2e --config src-tauri/tauri.e2e.conf.json -- --locked
 
       - name: Testhulpmiddel installeren (Edge WebDriver, passend bij WebView2)
         shell: pwsh
@@ -124,15 +124,15 @@ jobs:
           workspaces: desktop/src-tauri
 
       - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
-        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+        run: cargo test --locked --manifest-path desktop/src-tauri/Cargo.toml
 
       - name: Bouwhulpmiddelen installeren
         working-directory: desktop
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Programma bouwen (Apple-chip en Intel samen)
         working-directory: desktop
-        run: npm run tauri build -- --target universal-apple-darwin --bundles app
+        run: npm run tauri build -- --target universal-apple-darwin --bundles app -- --locked
 
       - name: Programma controleren en starten
         timeout-minutes: 10
@@ -207,3 +207,7 @@ jobs:
         env:
           VS_BROWSER: ${{ matrix.browser }}
         run: python desktop/tests/compat.py index.html desktop/dist/index.html desktop/tests/mock.js desktop/tests/v107/index.html desktop/tests/v107/desktop.html desktop/tests/v107/mock.js desktop/tests/compat-fixtures "$RUNNER_TEMP/compat.json"
+      - name: Vervalste projectbestanden (niets wordt uitgevoerd, niets gaat naar buiten)
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: python desktop/tests/hostile.py index.html desktop/tests/compat-fixtures

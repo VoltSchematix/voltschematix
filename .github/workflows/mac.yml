@@ -49,15 +49,15 @@ jobs:
           workspaces: desktop/src-tauri
 
       - name: Rust-tests (toegangsregels, paden, veilig wegschrijven)
-        run: cargo test --manifest-path desktop/src-tauri/Cargo.toml
+        run: cargo test --locked --manifest-path desktop/src-tauri/Cargo.toml
 
       - name: Bouwhulpmiddelen installeren
         working-directory: desktop
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Programma bouwen (Apple-chip en Intel samen)
         working-directory: desktop
-        run: npm run tauri build -- --target universal-apple-darwin --bundles app
+        run: npm run tauri build -- --target universal-apple-darwin --bundles app -- --locked
 
       - name: Programma controleren en starten
         timeout-minutes: 10
@@ -114,6 +114,8 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: write
+      id-token: write       # enkel voor het bouwbewijs
+      attestations: write
     steps:
       - name: Bestanden ophalen
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
@@ -132,7 +134,7 @@ jobs:
 
       - name: Bouwhulpmiddelen installeren
         working-directory: desktop
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Programma bouwen en bij Releases zetten
         id: tauri
@@ -142,7 +144,7 @@ jobs:
         with:
           projectPath: desktop
           tauriScript: npm run tauri
-          args: --target universal-apple-darwin
+          args: --target universal-apple-darwin -- --locked
           tagName: v__VERSION__
           releaseName: VoltSchematix __VERSION__
           releaseBody: |
@@ -159,6 +161,13 @@ jobs:
             **Controle (optioneel):** bij *Assets* staan `SHA256SUMS.txt` (Windows) en `SHA256SUMS-mac.txt` (Mac).
           releaseDraft: true
           prerelease: false
+
+      - name: Bouwbewijs maken (bewijst dat deze bestanden hier uit deze code gebouwd zijn)
+        uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-path: |
+            desktop/src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+            desktop/src-tauri/target/universal-apple-darwin/release/bundle/macos/*.app.tar.gz
 
       - name: SBOM maken (lijst van alle onderdelen, CycloneDX)
         run: |
@@ -177,7 +186,12 @@ jobs:
           cd desktop/src-tauri/target/universal-apple-darwin/release/bundle
           FILES=$(find . -type f \( -name '*.dmg' -o -name '*.app.tar.gz' \))
           if [ -z "$FILES" ]; then echo 'Geen installatiebestand gevonden'; exit 1; fi
-          for f in $FILES; do shasum -a 256 "$f" | sed "s#  .*/#  #"; done > "$RUNNER_TEMP/SHA256SUMS-mac.txt"
+          # de namen in het controlebestand zijn de namen bij de release: het .app.tar.gz-bestand heet daar zoals het .dmg-bestand
+          DMG=$(basename "$(find . -type f -name '*.dmg' | head -n 1)" .dmg)
+          for f in $FILES; do
+            n=$(basename "$f"); case "$n" in *.app.tar.gz) n="$DMG.app.tar.gz";; esac
+            printf '%s  %s\n' "$(shasum -a 256 "$f" | cut -d' ' -f1)" "$n"
+          done > "$RUNNER_TEMP/SHA256SUMS-mac.txt"
           cat "$RUNNER_TEMP/SHA256SUMS-mac.txt"
           { echo '### SHA-256 (Mac)'; echo '```'; cat "$RUNNER_TEMP/SHA256SUMS-mac.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
           for a in "SHA256SUMS-mac.txt:text/plain" "sbom-mac.cdx.json:application/json"; do
