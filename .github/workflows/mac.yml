@@ -41,6 +41,7 @@ jobs:
       - name: Rust installeren (Apple-chip en Intel)
         uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
+          toolchain: "1.99.1"   # vaste versie; bewust verhogen en dan opnieuw testen
           targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - name: Rust-cache
@@ -130,6 +131,7 @@ jobs:
       - name: Rust installeren (Apple-chip en Intel)
         uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
         with:
+          toolchain: "1.99.1"   # vaste versie; bewust verhogen en dan opnieuw testen
           targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - name: Bouwhulpmiddelen installeren
