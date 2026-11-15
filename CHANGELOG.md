@@ -1,5 +1,34 @@
 # VoltSchematix – wat is nieuw · nouveautés · what's new
 
+## 1.0.10
+
+### Nederlands
+
+**Update beschikbaar**
+- **Windows en Mac**: het venster achter het versienummer toonde nog de oude tekst, zonder het vinkje om de updatecontrole aan of uit te zetten. Dat is hersteld: je kunt de controle nu ook daar aan- en uitzetten, en de tekst klopt.
+- Na **Ja** op de vraag zie je meteen het resultaat: *Je hebt de nieuwste versie*, *Versie … beschikbaar* of dat controleren niet lukte.
+- In het venster achter het versienummer staat wanneer er laatst gecontroleerd is en wat het resultaat was, met een knop **Nu controleren**.
+
+Voor het overige is dit versie 1.0.9. Bestaande projecten blijven ongewijzigd.
+
+### Français
+
+**Mise à jour disponible**
+- **Windows et Mac** : la fenêtre derrière le numéro de version affichait encore l'ancien texte, sans la case pour activer ou désactiver la vérification des mises à jour. C'est corrigé : vous pouvez maintenant l'activer et la désactiver là aussi, et le texte est correct.
+- Après **Oui** à la question, vous voyez tout de suite le résultat : *Vous avez la dernière version*, *Version … disponible* ou l'échec de la vérification.
+- La fenêtre derrière le numéro de version indique la date de la dernière vérification et son résultat, avec un bouton **Vérifier maintenant**.
+
+Pour le reste, il s'agit de la version 1.0.9. Les projets existants restent inchangés.
+
+### English
+
+**Update available**
+- **Windows and Mac**: the window behind the version number still showed the old text, without the checkbox to switch the update check on or off. This is fixed: you can now switch it on and off there too, and the text is correct.
+- After **Yes** to the question you immediately see the result: *You have the latest version*, *Version … available* or that checking failed.
+- The window behind the version number shows when the last check was and what it found, with a **Check now** button.
+
+Otherwise this is version 1.0.9. Existing projects are unchanged.
+
 ## 1.0.9
 
 ### Nederlands

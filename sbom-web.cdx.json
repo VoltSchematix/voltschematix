@@ -9,7 +9,7 @@
       "type": "application",
       "bom-ref": "voltschematix-web",
       "name": "VoltSchematix (webversie, index.html)",
-      "version": "1.0.9",
+      "version": "1.0.10",
       "licenses": [
         {
           "license": {

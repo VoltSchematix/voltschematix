@@ -161,6 +161,23 @@ def test(d, fs, fix, exp, work, check):
     d.start()
     d.run(HELP + "await __t.until(()=>window.AEP_project&&document.readyState==='complete');await __t.sleep(1500);await __t.settle();")
     check(d.run("return document.body.classList.contains('desktop')&&!!window.__TAURI__"), 'programma gestart, aansluiting op Windows actief')
+    # venster achter het versienummer: in het echte programma (in 1.0.9 opende hier een oud venster zonder vinkje, met een foute tekst)
+    v = d.run(HELP + "const b=document.querySelector('.brand small');b.click();await __t.sleep(600);"
+              "const r={titel:__t.$('pj_dt').textContent,tekst:__t.$('pj_dc').innerText,vinkje:document.querySelectorAll('#pj_dc #vs_updc').length,nu:document.querySelectorAll('#pj_dc #vs_updn').length,aan:!!(__t.$('vs_updc')&&__t.$('vs_updc').checked)};return r")
+    check(v['vinkje'] == 1 and v['nu'] == 1, f"versienummer aanklikken: venster met vinkje voor de updatecontrole ({v['titel']})")
+    check('geen internetverbinding' not in v['tekst'], 'venster beweert niet dat het programma nooit verbinding maakt')
+    check(not v['aan'], 'updatecontrole staat uit zolang er geen toestemming is')
+    # echte controle vanuit het programma: vinkje aan -> een aanvraag naar versie.txt op de website; resultaat tonen (informatief:
+    # hangt af van het internet van de testmachine), daarna weer uitzetten
+    upd = d.run(HELP + "const c=__t.$('vs_updc');c.click();await __t.until(()=>{const t=__t.$('vs_upds').textContent;return t&&!/Bezig/.test(t)},15000);"
+                "const r={resultaat:__t.$('vs_upds').textContent,staat:window.AEP_upd?window.AEP_upd.staat():null,kop:__t.$('hdr_upd').textContent};"
+                "c.click();await __t.sleep(300);r.uit=!c.checked&&JSON.parse(localStorage.getItem('aep_settings')||'{}').upd===false;"
+                "__t.$('pj_dx').click();await __t.sleep(300);"
+                "r.dicht=__t.$('pj_dlg').hidden;return r")
+    print('  ...  echte updatecontrole vanuit het programma:', json.dumps(upd, ensure_ascii=False)[:600], flush=True)
+    check(upd.get('uit'), 'updatecontrole weer uitgezet (vinkje uit, instelling bewaard)')
+    if not upd.get('dicht'):
+        d.run(HELP + "__t.$('pj_dlg').hidden=true")
     # diagnose: rechtstreeks een paar opdrachten van het programma aanroepen
     fs.write(W('diag', 'proef.json'), '{}')
     d.queue(W('diag', 'proef.json'))

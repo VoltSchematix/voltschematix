@@ -20,9 +20,18 @@ class _Stil(http.server.SimpleHTTPRequestHandler):
 _srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), functools.partial(_Stil, directory=os.path.dirname(WEB)))
 threading.Thread(target=_srv.serve_forever, daemon=True).start()
 ONLINE = 'http://127.0.0.1:%d/%s' % (_srv.server_address[1], os.path.basename(WEB))
+# Nagebootste omgeving van het programma voor Windows/Mac (Tauri), zonder iets op te slaan: zo draait ook de laag
+# die enkel in het echte programma actief is (in 1.0.9 opende die een eigen, oud venster over het nieuwe heen).
+STUB = """window.__TAURI__={core:{invoke:async()=>null},dialog:{ask:async()=>true,message:async()=>{},open:async()=>null,save:async()=>null},
+ opener:{openUrl:async u=>{(window.__geopend=window.__geopend||[]).push(u)}},
+ window:{getCurrentWindow:()=>({onCloseRequested:()=>{},close:()=>{},destroy:()=>{}})},event:{listen:async()=>()=>{}}};"""
 ADR='https://voltschematix.github.io/voltschematix/versie.txt';SITE='https://voltschematix.github.io/voltschematix/'
 nv=lambda d:'.'.join(str(int(x)+(1 if i==2 else 0)+d*0) for i,x in enumerate(VER.split('.')))
 NEW=nv(0)
+def herlaad(pg):
+    # opnieuw openen zoals een gebruiker die het bestand opnieuw start; een gewone 'reload' van een file://-pagina
+    # laat de testbrowser af en toe zijn opslag verliezen (ligt aan de testbrowser, niet aan het programma)
+    u=pg.url; pg.goto('about:blank'); pg.goto(u)
 ok=0;bad=[]
 def chk(n,c,info=''):
     global ok
@@ -32,6 +41,7 @@ def run(p,kind,lang='nl'):
     b=getattr(p,BR).launch()
     def ctx(resp=None,store=None,width=1440):
         c=b.new_context(viewport={'width':width,'height':900})
+        if kind=='desk': c.add_init_script(STUB)
         pre={'aep_brw':'1','aep_lang':lang}
         if store is not None: pre['aep_settings']=json.dumps(store)
         reqs=[]
@@ -61,21 +71,35 @@ def run(p,kind,lang='nl'):
     c,pg,reqs,errs=ctx(NEW);pg.wait_for_timeout(2200)
     chk(P+'vraag zichtbaar',pg.is_visible('#upq'));chk(P+'geen aanvraag voor antwoord',reqs==[],reqs)
     pg.click('#upq_no');pg.wait_for_timeout(1200);chk(P+'Nee: balk weg',not pg.is_visible('#upq'));chk(P+'Nee: upd=false',S(pg).get('upd') is False,S(pg));chk(P+'Nee: geen aanvraag',reqs==[],reqs)
-    pg.reload();pg.wait_for_timeout(2500);chk(P+'Nee onthouden: geen vraag meer',not pg.is_visible('#upq'));chk(P+'Nee onthouden: geen aanvraag',reqs==[],reqs);c.close()
+    herlaad(pg);pg.wait_for_timeout(2500);chk(P+'Nee onthouden: geen vraag meer',not pg.is_visible('#upq'));chk(P+'Nee onthouden: geen aanvraag',reqs==[],reqs);c.close()
     # 2. Ja
     c,pg,reqs,errs=ctx(NEW);pg.wait_for_timeout(2000);pg.click('#upq_ja');pg.wait_for_timeout(1200)
+    chk(P+'Ja: de balk toont het resultaat',pg.is_visible('#upq') and NEW in pg.inner_text('#upq') and pg.locator('#upq button:visible').count()==0,pg.inner_text('#upq'))
+    pg.wait_for_timeout(6500);chk(P+'Ja: de balk verdwijnt daarna vanzelf',not pg.is_visible('#upq'))
     chk(P+'Ja: precies 1 aanvraag naar het vaste adres',len(reqs)==1 and reqs[0]['url']==ADR and reqs[0]['method']=='GET',reqs)
     if reqs:
         hd=reqs[0]['headers'];chk(P+'geen cookie/referer/authorization',not any(k in hd for k in('cookie','referer','authorization')),hd)
         chk(P+'geen eigen kopregels',all(k in('accept','user-agent','origin','sec-ch-ua','sec-ch-ua-mobile','sec-ch-ua-platform','sec-fetch-dest','sec-fetch-mode','sec-fetch-site','accept-language','accept-encoding','cache-control','pragma','priority','host','connection','te','dnt','sec-gpc') for k in hd),list(hd))
     H=hdr(pg);chk(P+'melding in de kop',H['vis'] and H['neu'] and H['t']==T[0]%NEW and H['tvis'] and H['b']==T[1],H);chk(P+'knop opent de vaste pagina',H['href']==SITE,H)
     chk(P+'onthouden',S(pg).get('updv')==NEW and S(pg).get('upd') is True,S(pg))
-    pg.reload();pg.wait_for_timeout(2600);H=hdr(pg);chk(P+'na herladen: melding uit het geheugen',H['neu'] and H['t']==T[0]%NEW,H);chk(P+'zelfde dag: geen tweede aanvraag',len(reqs)==1,len(reqs))
-    pg.evaluate("(()=>{const o=JSON.parse(localStorage.getItem('aep_settings'));o.updt=Date.now()-2*864e5;localStorage.setItem('aep_settings',JSON.stringify(o))})()");pg.reload();pg.wait_for_timeout(2600);chk(P+'na een dag: 1 nieuwe aanvraag',len(reqs)==2,len(reqs))
+    herlaad(pg);pg.wait_for_timeout(2600);H=hdr(pg);chk(P+'na herladen: melding uit het geheugen',H['neu'] and H['t']==T[0]%NEW,H);chk(P+'zelfde dag: geen tweede aanvraag',len(reqs)==1,len(reqs))
+    pg.evaluate("(()=>{const o=JSON.parse(localStorage.getItem('aep_settings'));o.updt=Date.now()-2*864e5;localStorage.setItem('aep_settings',JSON.stringify(o))})()");herlaad(pg);pg.wait_for_timeout(2600);chk(P+'na een dag: 1 nieuwe aanvraag',len(reqs)==2,len(reqs))
     # venster via versienummer
-    pg.click('.brand small');pg.wait_for_timeout(400);chk(P+'venster met vinkje aan',pg.is_checked('#vs_updc'));pg.uncheck('#vs_updc');pg.wait_for_timeout(300)
+    pg.click('.brand small');pg.wait_for_timeout(400)
+    dt=pg.inner_text('#pj_dlg');tit=pg.inner_text('#pj_dt')
+    if kind=='desk':
+        chk(P+'echte programmalaag actief',pg.evaluate("window.AEP_DESKTOP===true&&document.body.classList.contains('desktop')"))
+        chk(P+'titel van het venster',tit.strip().lower() in('programma voor windows','programme pour windows','program for windows','programma voor mac','programme pour mac','program for mac'),tit)
+    chk(P+'geen oude tekst over geen internetverbinding',not re.search(r'geen internetverbinding|jamais lui-même à internet|never connects to the internet',dt),dt[:300])
+    chk(P+'precies een vinkje en een knop Nu controleren',pg.locator('#pj_dlg #vs_updc').count()==1 and pg.locator('#pj_dlg #vs_updn').count()==1 and pg.is_visible('#vs_updn'))
+    chk(P+'venster toont het laatste resultaat met tijdstip',NEW in pg.inner_text('#vs_upds') and re.search(r'\d\d-\d\d-\d{4} \d\d:\d\d',pg.inner_text('#vs_upds')) is not None,pg.inner_text('#vs_upds'))
+    n=len(reqs);pg.click('#vs_updn');pg.wait_for_timeout(900);chk(P+'Nu controleren: precies 1 aanvraag',len(reqs)==n+1,len(reqs)-n);chk(P+'Nu controleren: resultaat',NEW in pg.inner_text('#vs_upds'),pg.inner_text('#vs_upds'))
+    if kind=='desk':
+        pg.click('#vs_upd');pg.wait_for_timeout(300);chk(P+'Controleer online opent de vaste website',pg.evaluate("window.__geopend||[]")==[SITE],pg.evaluate("window.__geopend||[]"))
+    chk(P+'venster met vinkje aan',pg.is_checked('#vs_updc'));pg.uncheck('#vs_updc');pg.wait_for_timeout(300)
+    chk(P+'uitzetten: knop Nu controleren weg',not pg.is_visible('#vs_updn'));n=len(reqs);pg.evaluate("document.getElementById('vs_updn').click()");pg.wait_for_timeout(600);chk(P+'zonder vinkje nooit een aanvraag, ook niet via de verborgen knop',len(reqs)==n,len(reqs)-n)
     H=hdr(pg);chk(P+'uitzetten: melding weg',not H['neu'] and H['b']==T[2],H);chk(P+'uitzetten: upd=false, gegevens gewist',S(pg).get('upd') is False and 'updv' not in S(pg) and 'updt' not in S(pg),S(pg))
-    n=len(reqs);pg.reload();pg.wait_for_timeout(2600);chk(P+'uit: geen aanvraag bij start',len(reqs)==n,len(reqs));chk(P+'uit: geen vraag opnieuw',not pg.is_visible('#upq'))
+    n=len(reqs);herlaad(pg);pg.wait_for_timeout(2600);chk(P+'uit: geen aanvraag bij start',len(reqs)==n,len(reqs));chk(P+'uit: geen vraag opnieuw',not pg.is_visible('#upq'))
     pg.click('.brand small');pg.wait_for_timeout(300);pg.check('#vs_updc');pg.wait_for_timeout(900);chk(P+'aanzetten: meteen 1 aanvraag',len(reqs)==n+1,len(reqs));chk(P+'venster meldt nieuwe versie',NEW in pg.inner_text('#vs_upds'),pg.inner_text('#vs_upds'))
     chk(P+'geen fouten',not errs,errs);c.close()
     if lang!='nl': b.close();return
@@ -91,7 +115,12 @@ def run(p,kind,lang='nl'):
     for name,resp in cases:
         c,pg,reqs,errs=ctx(resp,{'upd':True});pg.wait_for_timeout(9500 if name=='traag' else 2600);H=hdr(pg)
         chk(P+'fout antwoord ['+name+']: geen melding',not H['neu'] and H['b']==T[2],H);chk(P+'['+name+'] niets onthouden',not S(pg).get('updv'),S(pg));chk(P+'['+name+'] 1 aanvraag, geen naar elders',len(reqs)==1 and reqs[0]['url']==ADR,[r['url'] for r in reqs]);chk(P+'['+name+'] geen fouten',not errs,errs)
+        if name in('geen internet','404','script'):
+            pg.click('.brand small');pg.wait_for_timeout(300);pg.click('#vs_updn');pg.wait_for_timeout(1200);tx=pg.inner_text('#vs_upds');chk(P+'['+name+'] venster zegt dat controleren niet lukte',tx.startswith('Controleren lukte niet'),tx);pg.keyboard.press('Escape')
         chk(P+'['+name+'] nergens tekst uit het antwoord',pg.evaluate("!/kwaad|klik<|alert\\(1\\)/.test(document.body.innerText)"));c.close()
+    c,pg,reqs,errs=ctx(VER,{'upd':True});pg.wait_for_timeout(2600);pg.click('.brand small');pg.wait_for_timeout(300);tx=pg.inner_text('#vs_upds');chk(P+'gelijk nummer: venster zegt nieuwste versie met tijdstip','Je hebt de nieuwste versie.' in tx and 'Laatst gecontroleerd' in tx,tx);c.close()
+    c,pg,reqs,errs=ctx(VER);pg.wait_for_timeout(2000);pg.click('#upq_ja');pg.wait_for_timeout(1200);chk(P+'Ja met de nieuwste versie: balk zegt dat',pg.inner_text('#upq .brw-t')=='Je hebt de nieuwste versie.',pg.inner_text('#upq'));c.close()
+    c,pg,reqs,errs=ctx(None);pg.wait_for_timeout(2000);pg.click('#upq_ja');pg.wait_for_timeout(1200);chk(P+'Ja zonder internet: balk zegt dat het niet lukte',pg.inner_text('#upq .brw-t').startswith('Controleren lukte niet'),pg.inner_text('#upq'));c.close()
     # goed met witruimte
     c,pg,reqs,errs=ctx('  '+NEW+' \n',{'upd':True});pg.wait_for_timeout(2600);chk(P+'nummer met witruimte aanvaard',hdr(pg)['neu'],hdr(pg));c.close()
     big='.'.join([VER.split('.')[0],str(int(VER.split('.')[1])+1),'0']);c,pg,reqs,errs=ctx(big,{'upd':True});pg.wait_for_timeout(2600);chk(P+'hoger middendeel aanvaard',hdr(pg)['t']==T[0]%big,hdr(pg));c.close()

@@ -2,7 +2,7 @@
 
 **NL** · [FR](#français) · [EN](#english)
 
-**Versie 1.0.9** · Version 1.0.9
+**Versie 1.0.10** · Version 1.0.10
 
 VoltSchematix is een gratis programma om de plannen van een elektrische installatie te maken: het **eendraadschema**, het **situatieplan** en de **lijst met kringen**. Alles samen maak je in één PDF, klaar om af te drukken of te bezorgen.
 
