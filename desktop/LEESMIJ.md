@@ -18,7 +18,7 @@ Deze map bevat het programma voor Windows en voor Mac. Het gebruikt exact dezelf
 
 ## Veiligheid
 
-- Het programma maakt zelf geen internetverbinding en kan niet naar een andere pagina wegnavigeren.
+- Het programma maakt geen internetverbinding en kan niet naar een andere pagina wegnavigeren. Enige uitzondering, enkel na jouw toestemming: bij het opstarten (hoogstens één keer per dag) het nieuwste versienummer ophalen van één vast adres (`versie.txt` op de website). Het antwoord telt enkel als het precies een versienummer is.
 - Het kan enkel bestanden lezen en schrijven die de gebruiker zelf in een venster van Windows of macOS gekozen heeft
   of waarmee het programma geopend werd (dubbelklik). Mappen die in een oudere versie als projectmap gekozen waren, blijven toegelaten.
   Die controle gebeurt in het programma zelf (`src-tauri/src/guard.rs`), niet in de webpagina, en is dezelfde op Windows en Mac.

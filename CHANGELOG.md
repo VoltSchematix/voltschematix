@@ -1,5 +1,103 @@
 # VoltSchematix – wat is nieuw · nouveautés · what's new
 
+## 1.0.9
+
+### Nederlands
+
+**Eendraadschema**
+- **Kiezen of typen in één vak**: kabeltype, kabel (bv. 5G4), kabel van de voeding, zekering en kortsluitvermogen. Klikken toont altijd de volledige lijst; je mag ook zelf een waarde typen (bv. een eigen kabeltype, 125 A of 15000 A). Het aparte vak *Ander type…* is weg.
+- Kabeltype **Flex** erbij.
+- Knop **Selecteren** in de bovenste balk (stopt met plaatsen of verplaatsen, zoals Esc). De knoppen staan nu in dezelfde volgorde als op het situatieplan.
+- **Signalisatielampje** bij een dubbele wisselschakelaar wordt getekend.
+- Eigenschappen die bij de gekozen soort niets doen, staan er niet meer (bv. *Aantal buislampen* enkel bij een TL-armatuur, *Nulgeleider* enkel bij drie fasen).
+- De knoppen *Vóór dit bord* worden niet meer afgekapt; de uitleg bij *Naam van het bord* staat op de juiste plaats.
+
+**Situatieplan**
+- Een symbool dat je op het eendraadschema **verwijdert**, verdwijnt nu ook van het situatieplan (geen rood vraagteken meer). Hetzelfde als je het aantal verlaagt of *Niet op het situatieplan* aanvinkt. *Ongedaan maken* zet het terug op dezelfde plaats. Verwijderen op het situatieplan laat het eendraadschema ongemoeid.
+- **Trappen**: de looplijn (lijn, bolletje en pijl) is weg; enkel de treden blijven.
+- Een **aansluitpunt** uit het eendraadschema wordt getekend zoals het losse symbool, met een beentje.
+- *Achtergrondfoto* en *Foto op maat zetten* staan enkel nog onder de knop **Achtergrond**.
+
+**Afdrukken en document**
+- Bladen met dezelfde naam krijgen een volgnummer in de keuzelijst, bv. *Lijst met kringen (1/2)*.
+- De keuzes onder *Eendraadschema* en *Lijst met kringen* staan netjes onder elkaar.
+- Controleorganisme: kiezen of typen in één vak.
+
+**Uiterlijk**
+- Het **lichte thema** is minder fel: middengrijs met antraciet, met meer contrast. Het donkere thema is ongewijzigd.
+
+**Update beschikbaar**
+- Het HTML-bestand op je computer en de programma's voor Windows en Mac vragen bij de eerste start of ze **online mogen controleren of er een update beschikbaar is**. Zeg je ja, dan wordt hoogstens één keer per dag enkel een versienummer opgehaald; over jou of je projecten wordt niets verstuurd. Is er een nieuwe versie, dan staat dat bovenaan met de knop *Downloaden*. Er wordt niets vanzelf gedownload of geïnstalleerd. Aan- of uitzetten: klik op het versienummer.
+
+**Herstellingen**
+- Een leeg project gold soms als gewijzigd na het openen van *Afdrukken*.
+
+Bestaande projecten openen zonder aanpassing en zien er hetzelfde uit, behalve de trappen (zonder looplijn) en het aansluitpunt (met beentje) op het situatieplan. Projecten blijven uitwisselbaar tussen Windows, Mac, de online versie en het HTML-bestand.
+
+### Français
+
+**Schéma unifilaire**
+- **Choisir ou taper dans un seul champ** : type de câble, câble (p. ex. 5G4), câble d'alimentation, protection (A) et pouvoir de coupure. Un clic affiche toujours la liste complète ; vous pouvez aussi taper votre propre valeur (p. ex. un autre type de câble, 125 A ou 15000 A). Le champ séparé *Autre type…* a disparu.
+- Type de câble **Flex** ajouté.
+- Bouton **Sélectionner** dans la barre du haut (arrête le placement ou le déplacement, comme Esc). Les boutons sont dans le même ordre que sur le plan de situation.
+- La **lampe de signalisation** d'un double va-et-vient est dessinée.
+- Les propriétés sans effet pour le type choisi ne sont plus affichées (p. ex. *Nombre de tubes* uniquement pour une armature TL, *Conducteur neutre* uniquement en triphasé).
+- Les boutons *En amont de ce tableau* ne sont plus coupés ; l'explication du *Nom du tableau* est au bon endroit.
+
+**Plan de situation**
+- Un symbole **supprimé** sur le schéma unifilaire disparaît aussi du plan de situation (plus de point d'interrogation rouge). De même si vous diminuez le nombre ou cochez *Pas sur le plan de situation*. *Annuler* le remet au même endroit. Supprimer sur le plan ne touche pas au schéma unifilaire.
+- **Escaliers** : la ligne de foulée (ligne, point et flèche) a disparu ; seules les marches restent.
+- Un **point de raccordement** du schéma unifilaire est dessiné comme le symbole libre, avec une patte.
+- *Photo de fond* et *Mettre la photo à l'échelle* se trouvent uniquement sous le bouton **Arrière-plan**.
+
+**Impression et document**
+- Les feuilles de même nom reçoivent un numéro dans la liste, p. ex. *Liste des circuits (1/2)*.
+- Les choix sous *Schéma unifilaire* et *Liste des circuits* sont alignés l'un sous l'autre.
+- Organisme de contrôle : choisir ou taper dans un seul champ.
+
+**Apparence**
+- Le **thème clair** est moins vif : gris moyen et anthracite, avec plus de contraste. Le thème sombre est inchangé.
+
+**Mise à jour disponible**
+- Le fichier HTML sur votre ordinateur et les programmes pour Windows et Mac demandent au premier démarrage s'ils peuvent **vérifier en ligne si une mise à jour est disponible**. Si vous acceptez, seul un numéro de version est récupéré, au maximum une fois par jour ; rien n'est envoyé à votre sujet ou au sujet de vos projets. S'il existe une nouvelle version, elle est signalée en haut avec le bouton *Télécharger*. Rien n'est téléchargé ou installé automatiquement. Activer ou désactiver : cliquez sur le numéro de version.
+
+**Corrections**
+- Un projet vide était parfois considéré comme modifié après l'ouverture d'*Imprimer*.
+
+Les projets existants s'ouvrent sans adaptation et ont le même aspect, sauf les escaliers (sans ligne de foulée) et le point de raccordement (avec patte) sur le plan de situation. Les projets restent échangeables entre Windows, Mac, la version en ligne et le fichier HTML.
+
+### English
+
+**Single-line diagram**
+- **Pick or type in one field**: cable type, cable (e.g. 5G4), supply cable, breaker rating and breaking capacity. A click always shows the full list; you can also type your own value (e.g. another cable type, 125 A or 15000 A). The separate *Other type…* field is gone.
+- Cable type **Flex** added.
+- **Select** button in the top bar (stops placing or moving, like Esc). The buttons are now in the same order as on the site plan.
+- The **signal lamp** of a double two-way switch is drawn.
+- Properties that do nothing for the chosen kind are no longer shown (e.g. *Number of tubes* only for a fluorescent fitting, *Neutral conductor* only with three phases).
+- The *Upstream of this board* buttons are no longer cut off; the explanation for *Board name* is in the right place.
+
+**Site plan**
+- A symbol you **delete** on the single-line diagram now also disappears from the site plan (no more red question mark). The same when you lower the number or tick *Not on the site plan*. *Undo* puts it back in the same place. Deleting on the site plan leaves the single-line diagram untouched.
+- **Stairs**: the walking line (line, dot and arrow) is gone; only the steps remain.
+- A **connection point** from the single-line diagram is drawn like the loose symbol, with a short leg.
+- *Background photo* and *Scale photo* are now only under the **Background** button.
+
+**Printing and document**
+- Sheets with the same name get a number in the list, e.g. *List of circuits (1/2)*.
+- The choices under *Single-line diagram* and *List of circuits* are neatly stacked.
+- Inspection body: pick or type in one field.
+
+**Appearance**
+- The **light theme** is less bright: mid-grey with anthracite, with more contrast. The dark theme is unchanged.
+
+**Update available**
+- The HTML file on your computer and the programs for Windows and Mac ask at first start whether they may **check online whether an update is available**. If you say yes, only a version number is fetched, at most once a day; nothing about you or your projects is sent. If there is a new version, it is shown at the top with the *Download* button. Nothing is downloaded or installed automatically. To switch it on or off: click the version number.
+
+**Fixes**
+- An empty project was sometimes considered changed after opening *Print*.
+
+Existing projects open without changes and look the same, except stairs (no walking line) and the connection point (with a leg) on the site plan. Projects remain interchangeable between Windows, Mac, the online version and the HTML file.
+
 ## 1.0.8
 
 ### Nederlands

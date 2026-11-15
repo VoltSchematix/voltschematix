@@ -4,12 +4,12 @@
   "serialNumber": "urn:uuid:9ad6ee13-7a59-442d-8bb9-020820f0fe99",
   "version": 1,
   "metadata": {
-    "timestamp": "2026-11-09T16:34:45Z",
+    "timestamp": "2026-11-15T16:00:00Z",
     "component": {
       "type": "application",
       "bom-ref": "voltschematix-web",
       "name": "VoltSchematix (webversie, index.html)",
-      "version": "1.0.8",
+      "version": "1.0.9",
       "licenses": [
         {
           "license": {

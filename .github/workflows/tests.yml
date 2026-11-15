@@ -216,3 +216,18 @@ jobs:
         env:
           VS_BROWSER: ${{ matrix.browser }}
         run: python desktop/tests/hostile.py index.html desktop/tests/compat-fixtures
+      - name: Keuzevakken en eigenschappen (kiezen of typen, in drie talen)
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: |
+          python desktop/tests/velden.py index.html desktop/tests/compat-fixtures nl
+          python desktop/tests/velden.py index.html desktop/tests/compat-fixtures fr
+          python desktop/tests/velden.py index.html desktop/tests/compat-fixtures en
+      - name: Koppeling eendraadschema en situatieplan
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: python desktop/tests/koppeling.py index.html desktop/tests/compat-fixtures nl
+      - name: Melding "update beschikbaar" (enkel na toestemming, enkel een versienummer, enkel een adres)
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: python desktop/tests/update.py index.html desktop/dist/index.html
