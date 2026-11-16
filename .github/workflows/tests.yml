@@ -204,7 +204,7 @@ jobs:
           python-version: '3.12'
       - name: Playwright en ${{ matrix.browser }} installeren
         run: |
-          pip install playwright==1.63.0
+          pip install playwright==1.63.0 pillow==12.3.0
           # eerst met de systeemonderdelen (lettertypes ...); lukt dat niet omdat de pakketserver onbereikbaar is,
           # dan enkel de browser zelf: de tests tonen dan vanzelf of dat volstaat
           python -m playwright install --with-deps ${{ matrix.browser }} || python -m playwright install ${{ matrix.browser }}
@@ -231,3 +231,11 @@ jobs:
         env:
           VS_BROWSER: ${{ matrix.browser }}
         run: python desktop/tests/update.py index.html desktop/dist/index.html
+      - name: Achtergrondfoto's (veel foto's blijven bewaard, maten met komma)
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: python desktop/tests/fotos.py index.html
+      - name: Doorkijk op het situatieplan (enkel Windows-programma, enkel het tekenvlak)
+        env:
+          VS_BROWSER: ${{ matrix.browser }}
+        run: python desktop/tests/doorkijk.py index.html desktop/dist/index.html

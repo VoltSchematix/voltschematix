@@ -4,30 +4,45 @@
 
 ### Nederlands
 
-**Update beschikbaar**
-- **Windows en Mac**: het venster achter het versienummer toonde nog de oude tekst, zonder het vinkje om de updatecontrole aan of uit te zetten. Dat is hersteld: je kunt de controle nu ook daar aan- en uitzetten, en de tekst klopt.
-- Na **Ja** op de vraag zie je meteen het resultaat: *Je hebt de nieuwste versie*, *Versie … beschikbaar* of dat controleren niet lukte.
-- In het venster achter het versienummer staat wanneer er laatst gecontroleerd is en wat het resultaat was, met een knop **Nu controleren**.
+**Situatieplan**
+- **Doorkijk** (enkel in het programma voor Windows): het tekenvlak wordt doorzichtig, zodat je een PDF of foto die achter het venster openstaat kunt overtrekken zonder ze in te laden. Met *Venster bovenaan houden* en *Beeld vastzetten*. Doorkijk komt niet in het project en niet op de afdruk.
+- **Veel achtergrondfoto's**: met een tiental foto's of scans raakte de opslag van de browser vol. Het lopende werk werd dan niet meer automatisch bewaard, en wat je daarna tekende ging verloren bij herladen. Foto's worden nu apart bewaard, zodat dat niet meer gebeurt. Lukt automatisch bewaren toch niet, dan staat er een blijvende waarschuwing met de knop *Opslaan*.
+- **Foto op maat zetten**: de werkelijke afstand, de breedte, de hoogte en de hoek aanvaarden nu altijd een komma of een punt. In een browser in een andere taal viel de komma weg (8,00 werd 800). Een afstand die de foto onwaarschijnlijk groot of klein maakt, wordt geweigerd met uitleg.
+- *Foto op maat zetten* vanuit de knop **Achtergrond**: na de twee punten verschijnt het vak voor de afstand nu altijd.
 
-Voor het overige is dit versie 1.0.9. Bestaande projecten blijven ongewijzigd.
+**Update beschikbaar**
+- **Windows en Mac**: het venster achter het versienummer toonde nog de oude tekst, zonder het vinkje om de updatecontrole aan of uit te zetten. Dat is hersteld.
+- Na **Ja** op de vraag zie je meteen het resultaat. In het venster achter het versienummer staat wanneer er laatst gecontroleerd is, met een knop **Nu controleren**.
+
+Bestaande projecten openen zonder aanpassing en zien er hetzelfde uit.
 
 ### Français
 
-**Mise à jour disponible**
-- **Windows et Mac** : la fenêtre derrière le numéro de version affichait encore l'ancien texte, sans la case pour activer ou désactiver la vérification des mises à jour. C'est corrigé : vous pouvez maintenant l'activer et la désactiver là aussi, et le texte est correct.
-- Après **Oui** à la question, vous voyez tout de suite le résultat : *Vous avez la dernière version*, *Version … disponible* ou l'échec de la vérification.
-- La fenêtre derrière le numéro de version indique la date de la dernière vérification et son résultat, avec un bouton **Vérifier maintenant**.
+**Plan de situation**
+- **Transparence** (uniquement dans le programme pour Windows) : la zone de dessin devient transparente, pour retracer un PDF ou une photo ouverte derrière la fenêtre sans l'importer. Avec *Garder la fenêtre au premier plan* et *Verrouiller la vue*. La transparence n'est ni enregistrée dans le projet ni imprimée.
+- **Nombreuses photos de fond** : avec une dizaine de photos ou de scans, le stockage du navigateur était plein. Le travail en cours n'était alors plus enregistré automatiquement, et ce que vous dessiniez ensuite était perdu au rechargement. Les photos sont désormais conservées à part. Si l'enregistrement automatique échoue malgré tout, un avertissement permanent s'affiche avec le bouton *Enregistrer*.
+- **Mettre la photo à l'échelle** : la distance réelle, la largeur, la hauteur et l'angle acceptent toujours une virgule ou un point. Dans un navigateur dans une autre langue, la virgule disparaissait (8,00 devenait 800). Une distance qui rendrait la photo invraisemblablement grande ou petite est refusée avec une explication.
+- *Mettre la photo à l'échelle* depuis le bouton **Arrière-plan** : après les deux points, le champ de la distance apparaît désormais toujours.
 
-Pour le reste, il s'agit de la version 1.0.9. Les projets existants restent inchangés.
+**Mise à jour disponible**
+- **Windows et Mac** : la fenêtre derrière le numéro de version affichait encore l'ancien texte, sans la case pour activer ou désactiver la vérification. C'est corrigé.
+- Après **Oui** à la question, vous voyez tout de suite le résultat. La fenêtre derrière le numéro de version indique la dernière vérification, avec un bouton **Vérifier maintenant**.
+
+Les projets existants s'ouvrent sans adaptation et ont le même aspect.
 
 ### English
 
-**Update available**
-- **Windows and Mac**: the window behind the version number still showed the old text, without the checkbox to switch the update check on or off. This is fixed: you can now switch it on and off there too, and the text is correct.
-- After **Yes** to the question you immediately see the result: *You have the latest version*, *Version … available* or that checking failed.
-- The window behind the version number shows when the last check was and what it found, with a **Check now** button.
+**Site plan**
+- **See-through** (only in the program for Windows): the drawing area becomes transparent, so you can trace a PDF or photo that is open behind the window without importing it. With *Keep the window on top* and *Lock the view*. See-through is not stored in the project and is not printed.
+- **Many background photos**: with about ten photos or scans the browser's storage filled up. Work in progress was then no longer saved automatically, and what you drew afterwards was lost on reload. Photos are now kept separately so this no longer happens. If automatic saving still fails, a lasting warning appears with a *Save* button.
+- **Scale photo**: the real distance, width, height and angle now always accept a comma or a point. In a browser set to another language the comma was dropped (8,00 became 800). A distance that would make the photo implausibly large or small is refused with an explanation.
+- *Scale photo* from the **Background** button: after the two points the distance field now always appears.
 
-Otherwise this is version 1.0.9. Existing projects are unchanged.
+**Update available**
+- **Windows and Mac**: the window behind the version number still showed the old text, without the checkbox to switch the update check on or off. This is fixed.
+- After **Yes** to the question you immediately see the result. The window behind the version number shows the last check, with a **Check now** button.
+
+Existing projects open without changes and look the same.
 
 ## 1.0.9
 

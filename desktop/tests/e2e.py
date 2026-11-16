@@ -178,6 +178,50 @@ def test(d, fs, fix, exp, work, check):
     check(upd.get('uit'), 'updatecontrole weer uitgezet (vinkje uit, instelling bewaard)')
     if not upd.get('dicht'):
         d.run(HELP + "__t.$('pj_dlg').hidden=true")
+    # Doorkijk (enkel Windows): knop op het situatieplan, tekenvlak wordt een gat in het venster, venster bovenaan houden.
+    # Daarna een echte proef: een fel gekleurd venster achter het programma zetten en op het scherm meten of die kleur
+    # door het tekenvlak heen te zien is (informatief: hangt af van het scherm van de testmachine).
+    dk = d.run(HELP + "document.getElementById('t-sit').click();await __t.sleep(700);const m=__t.$('sp_dkm');"
+               "const r={knop:!!(m&&!m.hidden&&m.offsetParent),kan:window.AEP_dk.staat().kan};return r")
+    check(dk['knop'] and dk['kan'], 'Doorkijk: knop zichtbaar op het situatieplan')
+    proef = {}
+    try:
+        import ctypes, subprocess
+        u32, g32 = ctypes.windll.user32, ctypes.windll.gdi32
+        try: u32.SetProcessDPIAware()
+        except Exception: pass
+        SW, SH = u32.GetSystemMetrics(0), u32.GetSystemMetrics(1)
+        def kleuren():
+            hdc = u32.GetDC(0); o = []
+            for fy in (0.45, 0.55, 0.65, 0.75):
+                for fx in (0.40, 0.50, 0.60, 0.70, 0.80):
+                    c = g32.GetPixel(hdc, int(SW * fx), int(SH * fy)); o.append((c & 255, (c >> 8) & 255, (c >> 16) & 255))
+            u32.ReleaseDC(0, hdc); return o
+        magenta = lambda L: sum(1 for (r, g, b) in L if r > 200 and g < 80 and b > 200)
+        proef['scherm'] = [SW, SH]
+        proef['voor'] = magenta(kleuren())
+        achter = subprocess.Popen([sys.executable, '-c', "import tkinter as tk;r=tk.Tk();r.configure(bg='#ff00ff');r.attributes('-fullscreen',True);r.after(60000,r.destroy);r.mainloop()"])
+        time.sleep(3)
+        proef['gekleurd venster ervoor (zonder bovenaan houden)'] = magenta(kleuren())
+    except Exception as e:
+        proef['fout'] = str(e)[:200]; achter = None
+    st = d.run(HELP + "__t.$('sp_dkm').open=true;const c=__t.$('sp_dktop');c.click();await __t.sleep(1500);const s=__t.$('sp_dk');s.value='100';s.dispatchEvent(new Event('input',{bubbles:true}));await __t.sleep(900);"
+               "__t.$('sp_dkm').open=false;await __t.sleep(600);return {dk:document.body.classList.contains('dk'),top:c.checked,melding:__t.$('sp_msg').textContent,staat:window.AEP_dk.staat()}")
+    check(st['dk'] and st['staat']['aan'], 'Doorkijk 100 %: tekenvlak doorzichtig gezet')
+    check(st['top'] and 'lukt niet' not in st['melding'], 'Venster bovenaan houden: door Windows aanvaard')
+    try:
+        if achter is not None:
+            time.sleep(1.5); proef['doorkijk 100 % + bovenaan: gekleurde punten door het tekenvlak (van 20)'] = magenta(kleuren())
+    except Exception as e: proef['fout2'] = str(e)[:200]
+    uit = d.run(HELP + "__t.$('sp_dkm').open=true;const s=__t.$('sp_dk');s.value='0';s.dispatchEvent(new Event('input',{bubbles:true}));await __t.sleep(900);__t.$('sp_dkm').open=false;await __t.sleep(400);"
+                "return {dk:document.body.classList.contains('dk'),top:__t.$('sp_dktop').checked}")
+    try:
+        if achter is not None:
+            time.sleep(1.0); proef['doorkijk uit (programma nog vooraan): gekleurde punten'] = magenta(kleuren()); achter.kill()
+    except Exception as e: proef['fout3'] = str(e)[:200]
+    print('  ...  Doorkijk, echte proef op het scherm:', json.dumps(proef, ensure_ascii=False), flush=True)
+    check(not uit['dk'] and not uit['top'], 'Doorkijk uit: venster weer dicht, bovenaan houden uit')
+    d.run(HELP + "document.getElementById('t-proj').click();await __t.sleep(400)")
     # diagnose: rechtstreeks een paar opdrachten van het programma aanroepen
     fs.write(W('diag', 'proef.json'), '{}')
     d.queue(W('diag', 'proef.json'))

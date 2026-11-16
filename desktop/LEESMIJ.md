@@ -18,6 +18,7 @@ Deze map bevat het programma voor Windows en voor Mac. Het gebruikt exact dezelf
 
 ## Veiligheid
 
+- Op Windows is het venster zo aangemaakt dat het doorzichtig kan zijn (`tauri.windows.conf.json`, `transparent`). Dat wordt enkel gebruikt door **Doorkijk** op het situatieplan: het tekenvlak wordt dan een gat waar je doorheen kijkt. Het programma kan niet lezen wat erachter staat. De enige extra venstertoelating is `core:window:allow-set-always-on-top` (venster bovenaan houden). Op de Mac is het venster gewoon en bestaat Doorkijk niet.
 - Het programma maakt geen internetverbinding en kan niet naar een andere pagina wegnavigeren. Enige uitzondering, enkel na jouw toestemming: bij het opstarten (hoogstens één keer per dag) het nieuwste versienummer ophalen van één vast adres (`versie.txt` op de website). Het antwoord telt enkel als het precies een versienummer is.
 - Het kan enkel bestanden lezen en schrijven die de gebruiker zelf in een venster van Windows of macOS gekozen heeft
   of waarmee het programma geopend werd (dubbelklik). Mappen die in een oudere versie als projectmap gekozen waren, blijven toegelaten.
