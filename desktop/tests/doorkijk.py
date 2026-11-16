@@ -34,7 +34,8 @@ with sync_playwright() as p:
     pg,_=open_(Wb,stub=False);chk('HTML-bestand: geen knop Doorkijk',not pg.is_visible('#sp_dkm'))
     pg,_=open_(D,ua='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko)');chk('Mac-programma: geen knop Doorkijk',not pg.is_visible('#sp_dkm'),pg.evaluate("window.AEP_dk.staat()"))
     # Windows-programma
-    pg,errs=open_(D);chk('Windows-programma: knop Doorkijk zichtbaar',pg.is_visible('#sp_dkm'))
+    # het programma voor Windows meldt zich als Windows (de testbrowser WebKit meldt zich anders als Mac)
+    pg,errs=open_(D,ua='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0');chk('Windows-programma: knop Doorkijk zichtbaar',pg.is_visible('#sp_dkm'))
     # iets tekenen
     def toScr(x,y): return pg.evaluate("([x,y])=>{const sv=document.querySelector('#sp_cv svg');const pt=sv.createSVGPoint();pt.x=x;pt.y=y;const q=pt.matrixTransform(sv.getScreenCTM());return [q.x,q.y]}",[x,y])
     pg.click('#sp_list [data-t="muur"]')
